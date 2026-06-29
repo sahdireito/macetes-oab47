@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macetes para a OAB — Prof. Caqui | Exame 47</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f0ece4;color:#2a2a2a;min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ── HEADER ── */
+.header{padding:2.5rem 2rem 2rem;max-width:820px;margin:0 auto;}
+.tag{display:inline-block;background:#E8730C;color:#fff;font-size:10px;font-weight:700;letter-spacing:.12em;padding:3px 10px;border-radius:4px;margin-bottom:1rem;text-transform:uppercase;}
+.header h1{font-size:24px;font-weight:700;color:#1B2A4A;line-height:1.3;margin-bottom:.35rem;}
+.header h1 em{font-style:normal;color:#E8730C;}
+.header p{font-size:13.5px;color:#666;line-height:1.65;max-width:480px;}
+
+/* ── BARRA SUPERIOR (placar + filtros num scroll horizontal) ── */
+.topbar{position:sticky;top:0;z-index:10;background:#e8e2d8;border-bottom:1px solid rgba(0,0,0,.08);}
+.placar{display:flex;gap:0;padding:.75rem 2rem;align-items:center;max-width:820px;margin:0 auto;}
+.pg{display:flex;flex-direction:column;align-items:flex-start;padding-right:1.5rem;margin-right:1.5rem;border-right:1px solid rgba(0,0,0,.1);}
+.pg:last-of-type{border-right:none;}
+.pg .v{font-size:17px;font-weight:700;color:#E8730C;line-height:1;}
+.pg .l{font-size:10px;color:#888;margin-top:2px;letter-spacing:.04em;}
+.pg-reset{margin-left:auto;font-size:11px;color:#999;background:none;border:none;cursor:pointer;letter-spacing:.04em;padding:4px 0;}
+.pg-reset:hover{color:#E8730C;}
+
+.filtros{overflow-x:auto;padding:.625rem 2rem;display:flex;gap:6px;scrollbar-width:none;max-width:820px;margin:0 auto;}
+.filtros::-webkit-scrollbar{display:none;}
+.filtro-btn{flex-shrink:0;padding:5px 13px;border-radius:4px;border:1px solid rgba(0,0,0,.15);background:transparent;color:#777;font-size:12px;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.filtro-btn.active{background:#E8730C;border-color:#E8730C;color:#fff;}
+.filtro-btn:hover:not(.active){border-color:rgba(232,115,12,.6);color:#E8730C;}
+
+/* ── MODO TOGGLE ── */
+.modo-wrap{max-width:820px;margin:1.5rem auto 0;padding:0 2rem;}
+.modo-toggle{display:inline-flex;background:rgba(0,0,0,.07);border-radius:6px;padding:3px;}
+.modo-btn{padding:6px 16px;border-radius:4px;border:none;background:transparent;color:#888;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;letter-spacing:.02em;}
+.modo-btn.active{background:#1B2A4A;color:#fff;}
+
+/* ── CONTEÚDO ── */
+.content{max-width:820px;margin:0 auto;padding:1.5rem 2rem 3rem;}
+
+/* ── BLOCO POR MATÉRIA ── */
+.materia-bloco{margin-bottom:2.25rem;}
+.mat-titulo{display:flex;align-items:center;gap:.625rem;margin-bottom:.875rem;padding-bottom:.625rem;border-bottom:1px solid rgba(0,0,0,.08);}
+.mat-titulo h2{font-size:13px;font-weight:600;color:#888;letter-spacing:.04em;text-transform:uppercase;}
+.mat-badge{font-size:10px;color:#E8730C;font-weight:600;}
+.mat-progress{flex:1;height:2px;background:rgba(0,0,0,.1);border-radius:2px;}
+.mat-progress-fill{height:100%;background:#E8730C;border-radius:2px;transition:width .35s;}
+
+/* ── CARD PEGADINHA ── */
+.pegadinha-card{border-bottom:1px solid rgba(0,0,0,.08);transition:background .15s;}
+.pegadinha-card:last-child{border-bottom:none;}
+.pegadinha-card.vista .card-num{background:#E8730C;color:#fff;border-color:#E8730C;}
+
+.card-header{padding:.875rem 0;cursor:pointer;display:flex;align-items:center;gap:.875rem;}
+.card-num{width:24px;height:24px;border-radius:50%;border:1px solid rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(0,0,0,.3);flex-shrink:0;transition:all .2s;}
+.card-titulo{font-size:13.5px;color:#333;flex:1;line-height:1.45;}
+.card-arrow{color:rgba(0,0,0,.3);transition:transform .2s;font-size:11px;flex-shrink:0;}
+.pegadinha-card.open .card-arrow{transform:rotate(180deg);}
+
+.card-body{display:none;padding-bottom:1.25rem;padding-left:2.375rem;}
+.pegadinha-card.open .card-body{display:block;}
+
+.row-errado{margin-bottom:.625rem;}
+.row-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem;}
+.row-label.err{color:rgba(232,115,12,.7);}
+.row-label.ok{color:rgba(100,160,220,.7);}
+.row-texto{font-size:13px;line-height:1.7;color:#444;background:rgba(0,0,0,.03);border-left:2px solid rgba(232,115,12,.3);padding:.625rem .875rem;border-radius:0 4px 4px 0;}
+.row-texto.certo{border-left-color:rgba(60,120,200,.4);color:#2a4a7a;}
+.dica-txt{font-size:11.5px;color:#999;margin-top:.5rem;font-style:italic;padding-left:.25rem;}
+
+/* ── QUIZ ── */
+.quiz-container{max-width:600px;margin:0 auto;}
+.quiz-prog-row{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;}
+.quiz-prog-bar{flex:1;height:2px;background:rgba(0,0,0,.1);border-radius:2px;}
+.quiz-prog-fill{height:100%;background:#E8730C;border-radius:2px;transition:width .3s;}
+.quiz-prog-label{font-size:11px;color:#999;}
+
+.quiz-card-wrap{animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.quiz-mat-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#E8730C;display:block;margin-bottom:.875rem;}
+.quiz-enunciado{font-size:15px;font-weight:600;color:#1B2A4A;line-height:1.6;margin-bottom:1.25rem;}
+.quiz-enunciado em{font-style:normal;color:#b85c00;}
+
+.quiz-opts-wrap{display:flex;flex-direction:column;gap:.5rem;}
+.qopt{padding:.875rem 1rem;border-radius:6px;border:1px solid rgba(0,0,0,.12);background:rgba(0,0,0,.02);color:#555;font-size:13px;cursor:pointer;text-align:left;transition:all .15s;line-height:1.55;display:flex;gap:.875rem;align-items:flex-start;}
+.qopt:hover:not([disabled]){border-color:#E8730C;color:#1B2A4A;}
+.opt-letter{width:22px;height:22px;border-radius:50%;border:1px solid rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.qopt.certa{background:rgba(30,80,55,.35);border-color:rgba(60,150,90,.4);color:rgba(140,220,170,.9);}
+.qopt.certa .opt-letter{background:rgba(60,150,90,.5);border-color:transparent;color:#fff;}
+.qopt.errada{background:rgba(120,40,30,.2);border-color:rgba(200,80,60,.35);color:rgba(220,130,110,.85);}
+.qopt.errada .opt-letter{background:rgba(180,60,40,.4);border-color:transparent;color:#fff;}
+
+.quiz-fb{margin-top:.875rem;font-size:12.5px;line-height:1.65;padding:.75rem 1rem;border-radius:6px;display:none;border-left:3px solid;}
+.quiz-fb.show{display:block;}
+.quiz-fb.ok{background:rgba(30,80,55,.2);border-color:rgba(60,150,90,.5);color:rgba(140,220,170,.8);}
+.quiz-fb.nao{background:rgba(120,40,30,.15);border-color:rgba(232,115,12,.4);color:rgba(232,175,120,.8);}
+
+.btn-prox{margin-top:1rem;padding:8px 20px;background:#E8730C;color:#fff;border:none;border-radius:5px;font-size:13px;font-weight:600;cursor:pointer;display:none;}
+.btn-prox:hover{background:#c85f00;}
+.btn-prox.show{display:inline-block;}
+
+.resultado-wrap{text-align:center;padding:2rem 0;animation:fadeIn .2s;}
+.resultado-pct{font-size:56px;font-weight:700;color:#E8730C;line-height:1;}
+.resultado-sub{font-size:13px;color:#888;margin:.5rem 0 1rem;}
+.resultado-msg{font-size:13.5px;color:#666;line-height:1.7;max-width:400px;margin:0 auto 1.5rem;}
+.btn-retry{padding:8px 20px;border:1px solid rgba(232,115,12,.5);color:#E8730C;background:transparent;border-radius:5px;font-size:13px;cursor:pointer;}
+.btn-retry:hover{background:#E8730C;color:#fff;}
+
+/* ── FOOTER ── */
+.footer{text-align:center;padding:1.5rem 2rem;color:#aaa;font-size:11.5px;border-top:1px solid rgba(0,0,0,.08);max-width:820px;margin:0 auto;}
+.footer span{color:#E8730C;}
+
+@media(max-width:560px){
+  .header,.placar,.filtros,.modo-wrap,.content{padding-left:1.25rem;padding-right:1.25rem;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="tag">OAB 47 — 1ª Fase</span>
+  <h1>Macetes para não cair nas armadilhas da FGV</h1>
+  <p>Os erros mais cobrados por matéria — entenda a pegadinha, grave a resposta certa e chegue no Exame 47 blindado.</p>
+</div>
+
+<div class="topbar">
+  <div class="placar">
+    <div class="pg"><div class="v" id="pgVistas">0</div><div class="l">Vistas</div></div>
+    <div class="pg"><div class="v" id="pgAcertos">0</div><div class="l">Acertos</div></div>
+    <div class="pg"><div class="v" id="pgErros">0</div><div class="l">Erros</div></div>
+    <div class="pg"><div class="v" id="pgTotal">—</div><div class="l">Aproveit.</div></div>
+    <button class="pg-reset" onclick="resetarTudo()">↺ reiniciar</button>
+  </div>
+  <div class="filtros" id="filtros"></div>
+</div>
+
+<div class="modo-wrap">
+  <div class="modo-toggle">
+    <button class="modo-btn active" id="btnEstudo" onclick="setModo('estudo')">Modo Estudo</button>
+    <button class="modo-btn" id="btnQuiz" onclick="setModo('quiz')">Modo Quiz</button>
+  </div>
+</div>
+
+<div class="content">
+  <div id="viewEstudo"></div>
+  <div id="viewQuiz" style="display:none"></div>
+</div>
+
+<div class="footer">Prof. Caqui — OAB Descomplicada &nbsp;·&nbsp; <span>@sabrinedireito</span> &nbsp;·&nbsp; sahdireito.github.io</div>
+
+<script>
+const MATERIAS = [
+  {
+    "id": "dt",
+    "nome": "Direito do Trabalho",
+    "emoji": "⚖️",
+    "pegadinhas": [
+      {
+        "titulo": "Depósito Recursal — quem é isento?",
+        "errado": "A empresa em recuperação extrajudicial é isenta de depósito recursal.",
+        "certo": "Somente a empresa em recuperação JUDICIAL é isenta. A extrajudicial NÃO é isenta. Empresa falida em regra também não é isenta (salvo hipossuficiência comprovada).",
+        "dica": "Troque judicial por extrajudicial e você cai direto na pegadinha."
+      },
+      {
+        "titulo": "Prazo do Recurso Ordinário",
+        "errado": "O prazo para o Recurso Ordinário na Justiça do Trabalho é de 15 dias, igual ao CPC.",
+        "certo": "O prazo é de 8 dias, não 15. RO = 8 dias; Embargos de Declaração = 5 dias. Nunca use o prazo do CPC no processo do trabalho.",
+        "dica": "15 dias no processo do trabalho = cilada. Sempre 8 dias para o RO."
+      },
+      {
+        "titulo": "Prazo para pagamento das verbas rescisórias",
+        "errado": "O pagamento das verbas rescisórias deve ser feito no 1º dia útil após o término do contrato.",
+        "certo": "O prazo é de até 10 dias corridos após o término do contrato (art. 477, §6º, CLT). A regra do \"1º dia útil\" era da legislação antiga.",
+        "dica": "1º dia útil era a regra antiga. Hoje: 10 dias corridos."
+      },
+      {
+        "titulo": "Justa Causa — falta leve",
+        "errado": "Qualquer falta, mesmo leve, pode ser convertida em justa causa se repetida.",
+        "certo": "A justa causa exige imediatidade, proporcionalidade, gradação e prova. Falta leve não autoriza justa causa direta. Rol taxativo no art. 482 da CLT.",
+        "dica": "FGV descreve falta leve e pergunta se é justa causa. Resposta: não."
+      },
+      {
+        "titulo": "Competência da Justiça do Trabalho",
+        "errado": "A JT só julga conflitos entre empregado e empregador com vínculo de emprego formal.",
+        "certo": "A EC 45/2004 ampliou a competência para todas as relações de TRABALHO, não só de emprego. Trabalho avulso, doméstico e outras relações também entram.",
+        "dica": "Relação de trabalho é mais ampla do que relação de emprego."
+      },
+      {
+        "titulo": "Ausência de depósito recursal — efeito",
+        "errado": "A ausência de depósito recursal gera nulidade do recurso.",
+        "certo": "Gera NÃO CONHECIMENTO, não nulidade. Nulidade é vício processual; não conhecimento significa que o recurso não é admitido e nem analisado.",
+        "dica": "Nulidade ≠ não conhecimento. Distinção certeira da FGV."
+      },
+      {
+        "titulo": "Prescrição bienal e quinquenal",
+        "errado": "A prescrição bienal é para cobrar verbas dos últimos 5 anos.",
+        "certo": "É o inverso: bienal (2 anos) = prazo para ajuizar após término do contrato; quinquenal (5 anos) = profundidade da cobrança retroativa.",
+        "dica": "Bienal = prazo da AÇÃO. Quinquenal = quanto tempo atrás você pode cobrar."
+      },
+      {
+        "titulo": "Trabalho doméstico e FGTS",
+        "errado": "O empregador doméstico é obrigado a depositar o FGTS desde a CF/1988.",
+        "certo": "O FGTS para domésticos só se tornou obrigatório com a EC 72/2013. Antes era facultativo. Regras da CLT geral não se aplicam automaticamente ao doméstico.",
+        "dica": "Doméstico tem regime especial. Não aplique a CLT geral sem verificar."
+      },
+      {
+        "titulo": "Terceirização — responsabilidade da tomadora",
+        "errado": "Com a Lei 13.467/2017, a tomadora passa a ser solidariamente responsável.",
+        "certo": "A responsabilidade da tomadora continua sendo SUBSIDIÁRIA (Súmula 331 TST). Solidária = qualquer uma paga o todo. Subsidiária = só paga se a prestadora não puder.",
+        "dica": "Solidária vs. subsidiária: a tomadora só paga se a prestadora não puder."
+      },
+      {
+        "titulo": "Grupo econômico — requisitos",
+        "errado": "Só há grupo econômico com controle acionário direto ou atuação no mesmo ramo.",
+        "certo": "O art. 2º, §2º da CLT exige: interesse integrado + comunhão de interesses + atuação conjunta. Não exige controle societário direto nem mesmo ramo.",
+        "dica": "FGV insere critérios que a lei não exige para grupo econômico."
+      },
+      {
+        "titulo": "Contrato de trabalho por prazo determinado — prazo máximo",
+        "errado": "O contrato por prazo determinado pode ser renovado indefinidamente.",
+        "certo": "O contrato por prazo determinado tem prazo máximo de 2 anos e pode ser prorrogado uma única vez. Se prorrogado mais de uma vez ou ultrapassar 2 anos, passa a ser por prazo indeterminado.",
+        "dica": "Prorrogação única + 2 anos. Passou disso = indeterminado."
+      },
+      {
+        "titulo": "Aviso prévio proporcional",
+        "errado": "O aviso prévio é sempre de 30 dias, independente do tempo de serviço.",
+        "certo": "A Lei 12.506/2011 criou o aviso prévio proporcional: 30 dias + 3 dias por ano trabalhado, até o máximo de 90 dias.",
+        "dica": "30 + 3 por ano = aviso prévio proporcional. Máximo: 90 dias."
+      },
+      {
+        "titulo": "Horas extras — adicional mínimo",
+        "errado": "O adicional de horas extras é de 20% sobre a hora normal.",
+        "certo": "O adicional mínimo legal é de 50% (art. 7º, XVI, CF). Convenção coletiva pode prever percentual maior, mas nunca inferior a 50%.",
+        "dica": "Mínimo constitucional = 50%. 20% é abaixo do piso."
+      },
+      {
+        "titulo": "Adicional noturno — horário",
+        "errado": "O trabalho noturno urbano é das 22h às 5h.",
+        "certo": "O trabalho noturno urbano é das 22h às 5h (hora reduzida de 52min30s). O rural tem horários distintos: lavoura é das 21h às 5h; pecuária das 20h às 4h.",
+        "dica": "Urbano = 22h às 5h. Rural tem horários diferentes. FGV adora misturar."
+      },
+      {
+        "titulo": "FGTS — alíquota",
+        "errado": "A alíquota do FGTS é de 11% sobre a remuneração do empregado.",
+        "certo": "A alíquota geral do FGTS é de 8%. Para aprendiz é de 2%. A alíquota de 11% é da contribuição previdenciária, não do FGTS.",
+        "dica": "FGTS = 8%. 11% é INSS. Não misture os dois."
+      },
+      {
+        "titulo": "Estabilidade da gestante",
+        "errado": "A gestante só tem estabilidade se comunicar a gravidez ao empregador antes da demissão.",
+        "certo": "A estabilidade da gestante é OBJETIVA — independe de comunicação ao empregador ou mesmo do conhecimento da própria empregada (Súmula 244 TST).",
+        "dica": "Gestante tem estabilidade mesmo sem saber que está grávida. Independe de comunicação."
+      },
+      {
+        "titulo": "Intervalo intrajornada — penalidade",
+        "errado": "Se o empregador não concede o intervalo intrajornada, deve pagar apenas o período suprimido.",
+        "certo": "Após a Reforma Trabalhista (Lei 13.467/2017), paga-se apenas o período não concedido com adicional de 50%, e não mais a hora integral. Mas a supressão total continua sendo irregular.",
+        "dica": "Pós-reforma: paga só o que foi suprimido + 50%. Não mais a hora inteira."
+      },
+      {
+        "titulo": "Salário mínimo — vinculação",
+        "errado": "É permitido vincular salários a múltiplos do salário mínimo em contratos de trabalho.",
+        "certo": "A vinculação de salários ao salário mínimo é VEDADA pela CF (art. 7º, IV, parte final). Salário pode ser reajustado pelo salário mínimo como base, mas não ficar \"atrelado\" a múltiplos.",
+        "dica": "Vincular salário a múltiplo do mínimo = inconstitucional."
+      },
+      {
+        "titulo": "Súmula 331 TST — terceirização de atividade-fim",
+        "errado": "A Súmula 331 do TST proibia terceirização de atividade-fim.",
+        "certo": "A Súmula 331 foi superada pelo STF (ADPF 324 e RE 958.252). Hoje é permitida a terceirização de qualquer atividade, inclusive a-fim, desde a Lei 13.429/2017.",
+        "dica": "Súmula 331 estava ultrapassada. Hoje terceirização de atividade-fim é permitida."
+      },
+      {
+        "titulo": "Prescrição intercorrente na Justiça do Trabalho",
+        "errado": "A prescrição intercorrente não se aplica na Justiça do Trabalho em nenhuma hipótese.",
+        "certo": "Após a Reforma Trabalhista (art. 11-A da CLT), a prescrição intercorrente passou a ser aplicável na JT. O prazo é de 2 anos a partir de qualquer despacho que exija movimentação da parte.",
+        "dica": "Pós-2017: prescrição intercorrente existe na JT sim. Mas precisa de intimação prévia."
+      }
+    ]
+  },
+  {
+    "id": "etica",
+    "nome": "Ética e Estatuto da OAB",
+    "emoji": "📜",
+    "pegadinhas": [
+      {
+        "titulo": "Exame da OAB — estagiário precisa?",
+        "errado": "O Exame da OAB é requisito tanto para inscrição como advogado quanto como estagiário.",
+        "certo": "O exame só é exigido para inscrição como ADVOGADO. Para estagiário não é necessário — basta estar regularmente matriculado em curso jurídico.",
+        "dica": "Estagiário não precisa do exame da OAB."
+      },
+      {
+        "titulo": "Inscrição suplementar e direito a voto",
+        "errado": "O advogado inscrito suplementarmente pode votar nas eleições da OAB desse estado.",
+        "certo": "O direito de voto é exclusivo da inscrição PRINCIPAL. A suplementar permite advogar habitualmente em outro estado, mas não dá direito de voto.",
+        "dica": "Suplementar = trabalhar. Principal = votar."
+      },
+      {
+        "titulo": "Publicidade — consulta gratuita",
+        "errado": "O advogado pode anunciar consulta gratuita no primeiro atendimento.",
+        "certo": "Isso configura mercantilização e captação irregular de clientela. A publicidade deve ser informativa, sóbria e sem cunho comercial.",
+        "dica": "Qualquer apelo comercial para atrair cliente é vedado."
+      },
+      {
+        "titulo": "Nome de sociedade de advogados",
+        "errado": "A sociedade de advogados pode usar nome fantasia.",
+        "certo": "O nome deve conter apenas nome de sócios advogados (vivos ou falecidos). Nomes fantasia, abreviações e referências comerciais são proibidos.",
+        "dica": "Nome fantasia em escritório de advocacia = proibido."
+      },
+      {
+        "titulo": "Incompatibilidade — pode advogar fora do horário?",
+        "errado": "O servidor público incompatível pode advogar fora do horário de trabalho.",
+        "certo": "Incompatibilidade é ABSOLUTA. O incompatível não pode advogar em hipótese alguma, em qualquer horário ou matéria.",
+        "dica": "Incompatível = nunca. Impedido = com restrições. São diferentes."
+      },
+      {
+        "titulo": "Sigilo profissional — interesse público",
+        "errado": "O advogado pode revelar segredo do cliente por relevante interesse público.",
+        "certo": "O sigilo é quase absoluto. Só pode ser quebrado para evitar grave ameaça à vida ou em legítima defesa do próprio advogado. Interesse público genérico não basta.",
+        "dica": "Interesse público não quebra sigilo. Só ameaça à vida ou defesa própria."
+      },
+      {
+        "titulo": "Honorários — tabela da OAB é obrigatória?",
+        "errado": "O advogado é obrigado a cobrar no mínimo o valor da tabela da OAB.",
+        "certo": "A tabela é referência e parâmetro mínimo, mas não é obrigatória. O advogado pode ajustar livremente com o cliente.",
+        "dica": "Tabela da OAB orienta, não obriga."
+      },
+      {
+        "titulo": "Acesso aos autos sem procuração",
+        "errado": "O advogado só pode ter acesso aos autos se apresentar procuração.",
+        "certo": "O advogado pode ter acesso aos autos mesmo sem procuração, salvo se o processo for sigiloso E ele não represente a parte.",
+        "dica": "Prerrogativa de acesso = regra. Procuração = exigível só em processo sigiloso sem representação."
+      },
+      {
+        "titulo": "Penalidade de exclusão — trânsito em julgado?",
+        "errado": "A exclusão da OAB só é aplicada após o trânsito em julgado.",
+        "certo": "Basta a decisão final no processo disciplinar da OAB. As penalidades são: censura, suspensão, exclusão e multa.",
+        "dica": "Processo disciplinar da OAB é autônomo. Não depende de trânsito em julgado."
+      },
+      {
+        "titulo": "Captação em grupos de WhatsApp",
+        "errado": "O advogado pode oferecer serviços em grupos de WhatsApp de forma discreta.",
+        "certo": "A captação de clientela é proibida em qualquer canal, incluindo redes sociais e WhatsApp. O critério é o objetivo de captar, não o canal.",
+        "dica": "Canal não importa. Captação = proibido sempre."
+      },
+      {
+        "titulo": "Sociedade com não advogado",
+        "errado": "O advogado pode formar sociedade com profissionais de outras áreas, como contadores.",
+        "certo": "É PROIBIDA a formação de sociedade entre advogado e não advogado para prestação de serviços jurídicos. Sociedade multidisciplinar não é permitida no Brasil.",
+        "dica": "Advogado só se associa com advogado."
+      },
+      {
+        "titulo": "Cláusula de exclusividade",
+        "errado": "O contrato de honorários pode proibir o cliente de contratar outro advogado.",
+        "certo": "É vedada qualquer cláusula que restrinja a liberdade do cliente de contratar ou dispensar advogado. A relação é de confiança e deve ser livre.",
+        "dica": "Não pode impedir o cliente de trocar de advogado."
+      },
+      {
+        "titulo": "Advocacia pro bono",
+        "errado": "O advogado não pode prestar serviços gratuitos, pois caracteriza captação de clientela.",
+        "certo": "A advocacia pro bono (serviços gratuitos a pessoas hipossuficientes ou entidades sem fins lucrativos) é permitida e incentivada. Não configura captação.",
+        "dica": "Pro bono = permitido. Gratuidade como marketing = proibida."
+      },
+      {
+        "titulo": "Honorários de sucumbência pertencem a quem?",
+        "errado": "Os honorários de sucumbência pertencem ao cliente, não ao advogado.",
+        "certo": "Os honorários de sucumbência pertencem ao ADVOGADO e têm natureza alimentar (art. 85, §14 CPC). O cliente não pode dispor deles sem anuência do advogado.",
+        "dica": "Sucumbência = do advogado, não do cliente."
+      },
+      {
+        "titulo": "Mandato tácito",
+        "errado": "O advogado precisa sempre de procuração expressa para atuar no processo.",
+        "certo": "O mandato tácito é admitido em determinadas situações, como quando o advogado pratica atos urgentes e o cliente ratifica depois. Mas há limites — não serve para todos os atos.",
+        "dica": "Mandato tácito existe, mas é exceção com limites bem definidos."
+      },
+      {
+        "titulo": "Sigilo — comunicação com cliente preso",
+        "errado": "O advogado pode ter comunicação reservada com cliente preso, mas somente por escrito.",
+        "certo": "O advogado tem direito à comunicação PESSOAL e RESERVADA com cliente preso, mesmo em estabelecimentos militares. Pode ser verbal, escrita ou por qualquer meio.",
+        "dica": "Comunicação com preso = direito amplo, verbal ou escrita."
+      },
+      {
+        "titulo": "Inscrição provisória",
+        "errado": "O bacharel em Direito aprovado no Exame da OAB pode advogar sozinho com inscrição provisória.",
+        "certo": "A inscrição provisória é para bacharel que ainda não colou grau. Ele pode atuar, mas somente supervisionado por advogado. Após colação, deve se inscrever regularmente.",
+        "dica": "Provisório = com supervisão. Não pode advogar sozinho."
+      },
+      {
+        "titulo": "Publicidade com foto do advogado",
+        "errado": "O advogado não pode publicar sua foto em qualquer tipo de publicidade profissional.",
+        "certo": "A publicidade com foto do advogado é permitida, desde que seja sóbria e informativa, sem cunho mercantilista. O que não pode é usar a foto para captação ou merchandising.",
+        "dica": "Foto = permitida se sóbria. Merchandising = proibido."
+      },
+      {
+        "titulo": "Impedimento do advogado que foi juiz",
+        "errado": "O advogado que exerceu a magistratura pode advogar em qualquer processo logo após a aposentadoria.",
+        "certo": "O advogado que foi juiz está impedido de advogar no juízo em que exerceu jurisdição por 3 anos após deixar a magistratura (quarentena).",
+        "dica": "Ex-juiz tem quarentena de 3 anos no juízo em que atuou."
+      },
+      {
+        "titulo": "Proibição de sociedade com CNPJ diferente de escritório",
+        "errado": "O advogado pode ser sócio de qualquer empresa com CNPJ, independentemente de seu objeto.",
+        "certo": "O advogado não pode participar de sociedades que explorem atividades incompatíveis com a advocacia. A participação em sociedades comerciais pode gerar incompatibilidade ou impedimento.",
+        "dica": "Sócio de empresa comercial pode gerar incompatibilidade com a advocacia."
+      }
+    ]
+  },
+  {
+    "id": "const",
+    "nome": "Direito Constitucional",
+    "emoji": "🏛️",
+    "pegadinhas": [
+      {
+        "titulo": "Controle difuso — efeito erga omnes?",
+        "errado": "No controle difuso, a decisão do STF tem efeito erga omnes automaticamente.",
+        "certo": "No controle difuso, o efeito é INTER PARTES. Para efeito erga omnes, a decisão precisa ser comunicada ao Senado (art. 52, X, CF) ou via tese de repercussão geral.",
+        "dica": "Difuso = inter partes (regra). Concentrado = erga omnes."
+      },
+      {
+        "titulo": "Cláusulas pétreas — são imutáveis?",
+        "errado": "As cláusulas pétreas são absolutamente imutáveis e não podem ser tocadas por emenda.",
+        "certo": "Podem ser emendadas, mas não ABOLIDAS (art. 60, §4º). É possível ampliar um direito fundamental, mas não suprimir sua essência.",
+        "dica": "Não pode abolir. Pode aprimorar ou ampliar."
+      },
+      {
+        "titulo": "Direitos sociais são cláusulas pétreas?",
+        "errado": "Todos os direitos sociais do art. 6º da CF são cláusulas pétreas.",
+        "certo": "Direitos sociais em si NÃO são expressamente cláusulas pétreas. Apenas direitos e garantias individuais o são. Alguns direitos sociais podem ser protegidos indiretamente.",
+        "dica": "Cláusula pétrea expressa = direitos e garantias individuais."
+      },
+      {
+        "titulo": "Analfabeto — direitos políticos plenos?",
+        "errado": "O analfabeto tem direitos políticos plenos: pode votar e se candidatar.",
+        "certo": "O analfabeto pode VOTAR (facultativamente), mas NÃO pode se candidatar. Seus direitos políticos são parciais.",
+        "dica": "Votar: sim (facultativo). Candidatar: não."
+      },
+      {
+        "titulo": "Foro parlamentar — após o mandato?",
+        "errado": "O parlamentar mantém foro privilegiado no STF para crimes do mandato mesmo após ele.",
+        "certo": "O foro só vale durante o mandato e para crimes EM RAZÃO do mandato (STF, AP 937). Com o fim do mandato, o processo vai ao 1º grau.",
+        "dica": "Fim do mandato = fim do foro (regra geral)."
+      },
+      {
+        "titulo": "Prisão de parlamentar em flagrante",
+        "errado": "A prisão de parlamentar em flagrante depende de autorização prévia da Casa.",
+        "certo": "A prisão pode ocorrer sem autorização. A Casa pode SUSTÁ-LA em 24 horas por voto da maioria (art. 53, §2º, CF).",
+        "dica": "Não precisa de autorização para prender. Casa pode sustar depois."
+      },
+      {
+        "titulo": "Mandado de segurança contra particular",
+        "errado": "O MS pode ser impetrado contra qualquer ato lesivo de direito líquido e certo.",
+        "certo": "MS só cabe contra ato de AUTORIDADE PÚBLICA ou particular no exercício de função pública delegada. Contra particular comum, não cabe MS.",
+        "dica": "Particular comum = não cabe MS."
+      },
+      {
+        "titulo": "Município — ente derivado?",
+        "errado": "Os municípios são entes federativos derivados, subordinados aos estados.",
+        "certo": "O município é ente federativo AUTÔNOMO e ORIGINÁRIO da federação (art. 18, CF). Não é subordinado ao estado.",
+        "dica": "Brasil é o único país com município como ente federativo autônomo."
+      },
+      {
+        "titulo": "Habeas data — qualquer informação?",
+        "errado": "O habeas data serve para acessar qualquer informação sobre o impetrante.",
+        "certo": "O habeas data é restrito a informações pessoais em BANCOS DE DADOS DE ENTIDADES GOVERNAMENTAIS ou de caráter público.",
+        "dica": "Habeas data = informações pessoais + banco público. Só isso."
+      },
+      {
+        "titulo": "Ação popular — qualquer pessoa?",
+        "errado": "Qualquer pessoa pode propor ação popular.",
+        "certo": "Apenas o CIDADÃO (quem tem título de eleitor e direitos políticos plenos) pode propor ação popular.",
+        "dica": "Cidadão = eleitor com direitos políticos. Não é qualquer pessoa."
+      },
+      {
+        "titulo": "Controle preventivo de constitucionalidade — quem faz?",
+        "errado": "O STF é o único órgão que realiza controle preventivo de constitucionalidade.",
+        "certo": "O controle preventivo pode ser feito pelo Poder Legislativo (CCJ), pelo Poder Executivo (veto) e, excepcionalmente, pelo STF (via mandado de segurança impetrado por parlamentar).",
+        "dica": "Preventivo: CCJ, veto presidencial e, excepcionalmente, STF via MS de parlamentar."
+      },
+      {
+        "titulo": "Medida provisória — prazo de vigência",
+        "errado": "A medida provisória tem validade de 60 dias, sem possibilidade de prorrogação.",
+        "certo": "A MP tem vigência inicial de 60 dias, prorrogável automaticamente por mais 60 dias, totalizando 120 dias. Se não convertida em lei nesse prazo, perde a eficácia.",
+        "dica": "MP = 60 + 60 dias. Total: 120 dias."
+      },
+      {
+        "titulo": "Imunidade parlamentar material",
+        "errado": "A imunidade parlamentar material (inviolabilidade) cobre qualquer declaração do parlamentar.",
+        "certo": "A imunidade material cobre opiniões, palavras e votos no EXERCÍCIO DO MANDATO. Declarações sem conexão com o mandato não estão cobertas (STF).",
+        "dica": "Imunidade material = ligada ao exercício do mandato. Fora disso, não protege."
+      },
+      {
+        "titulo": "Estado de defesa x Estado de sítio",
+        "errado": "Estado de defesa e estado de sítio são equivalentes em suas hipóteses de cabimento.",
+        "certo": "São institutos distintos: estado de defesa tem cabimento mais restrito (perturbação da ordem pública ou calamidade) e prazo de 30 dias. Estado de sítio tem cabimento mais amplo e prazo de 30 dias (prorrogável ilimitadamente em caso de guerra).",
+        "dica": "Defesa = mais leve. Sítio = mais grave. Prazos e hipóteses distintos."
+      },
+      {
+        "titulo": "ADI — legitimados ativos",
+        "errado": "Qualquer pessoa pode propor Ação Direta de Inconstitucionalidade no STF.",
+        "certo": "O rol de legitimados para a ADI é TAXATIVO (art. 103, CF): Presidente da República, Mesa do Senado/Câmara/Assembleias, Governadores, PGR, OAB, partidos com representação no Congresso e confederações sindicais/entidades de classe nacionais.",
+        "dica": "ADI = rol taxativo do art. 103. Não é qualquer um."
+      },
+      {
+        "titulo": "Recurso extraordinário — repercussão geral",
+        "errado": "A repercussão geral no RE é presumida quando a questão envolve matéria constitucional.",
+        "certo": "A repercussão geral deve ser DEMONSTRADA pelo recorrente. O STF pode reconhecê-la por maioria qualificada de 8 ministros. Não é presumida automaticamente.",
+        "dica": "Repercussão geral = deve ser demonstrada. Não é automática."
+      },
+      {
+        "titulo": "Vedação ao nepotismo — alcance",
+        "errado": "A Súmula Vinculante 13 veda nepotismo apenas no Poder Executivo federal.",
+        "certo": "A Súmula Vinculante 13 se aplica aos três Poderes e a todos os entes federativos (União, estados e municípios). Há exceções para cargos políticos (ministros, secretários).",
+        "dica": "SV 13 = todos os Poderes + todos os entes. Exceção: cargos políticos."
+      },
+      {
+        "titulo": "Princípio da insignificância — aplicação pelo juiz",
+        "errado": "O princípio da insignificância só pode ser aplicado pelo STJ e STF.",
+        "certo": "O princípio da insignificância pode ser aplicado por qualquer juiz ou tribunal, inclusive de 1º grau. Não é exclusividade dos tribunais superiores.",
+        "dica": "Insignificância pode ser aplicada em qualquer instância."
+      },
+      {
+        "titulo": "Emenda constitucional — quórum",
+        "errado": "A emenda constitucional é aprovada por maioria absoluta em votação única.",
+        "certo": "Emenda constitucional exige aprovação em DOIS TURNOS em cada Casa do Congresso, por maioria de 3/5 dos membros (art. 60, §2º, CF).",
+        "dica": "EC = 3/5 + dois turnos em cada Casa. Maioria absoluta não basta."
+      },
+      {
+        "titulo": "Competência privativa x exclusiva da União",
+        "errado": "Competência privativa e exclusiva da União são expressões sinônimas.",
+        "certo": "São distintas: competência EXCLUSIVA (art. 21) não admite delegação. Competência PRIVATIVA (art. 22) pode ser delegada aos estados por lei complementar federal.",
+        "dica": "Exclusiva = indelegável. Privativa = delegável por LC."
+      }
+    ]
+  },
+  {
+    "id": "trib",
+    "nome": "Direito Tributário",
+    "emoji": "💰",
+    "pegadinhas": [
+      {
+        "titulo": "Espécies tributárias — quantas são?",
+        "errado": "O ordenamento brasileiro reconhece 3 espécies tributárias conforme o CTN.",
+        "certo": "O CTN menciona 3, mas a CF/88 e o STF reconhecem 5 espécies: impostos, taxas, contribuições de melhoria, empréstimos compulsórios e contribuições especiais.",
+        "dica": "CTN = 3. CF + STF = 5. Sempre use as 5 na OAB."
+      },
+      {
+        "titulo": "Anterioridade — todos os tributos respeitam?",
+        "errado": "O princípio da anterioridade anual se aplica a todos os tributos sem exceção.",
+        "certo": "Exceções à anterioridade anual: II, IE, IOF, IPI (extrafiscais); IEG e empréstimo compulsório de guerra/calamidade. Contribuições previdenciárias respeitam a nonagesimal, não a anual.",
+        "dica": "Memorize as exceções à anterioridade. FGV adora cobrar."
+      },
+      {
+        "titulo": "Competência tributária pode ser delegada?",
+        "errado": "A competência tributária pode ser delegada a outro ente por lei.",
+        "certo": "Competência tributária é INDELEGÁVEL (art. 7º, CTN). O que pode ser delegado é a CAPACIDADE ATIVA — arrecadar ou fiscalizar tributos.",
+        "dica": "Competência (criar) = indelegável. Capacidade ativa (cobrar) = delegável."
+      },
+      {
+        "titulo": "Crédito tributário nasce com o fato gerador?",
+        "errado": "O crédito tributário surge com a ocorrência do fato gerador.",
+        "certo": "O fato gerador faz nascer a OBRIGAÇÃO tributária. O crédito tributário nasce com o LANÇAMENTO (art. 142, CTN), que pode ocorrer depois.",
+        "dica": "Fato gerador → obrigação. Lançamento → crédito. Ordem importa."
+      },
+      {
+        "titulo": "Sócio-gerente responde automaticamente?",
+        "errado": "O sócio-gerente responde automaticamente pelas dívidas tributárias da sociedade.",
+        "certo": "O sócio só responde pessoalmente se houver excesso de poderes, infração à lei ou ao contrato social (art. 135, CTN). Mera inadimplência não gera responsabilidade pessoal do sócio.",
+        "dica": "Inadimplência da empresa ≠ responsabilidade do sócio. Precisa de ato ilícito."
+      },
+      {
+        "titulo": "Imunidade x Isenção",
+        "errado": "Imunidade e isenção são formas de exoneração fiscal com o mesmo efeito.",
+        "certo": "Imunidade: vedação CONSTITUCIONAL ao poder de tributar (ex: livros, templos). Isenção: benefício concedido por LEI ordinária ou complementar.",
+        "dica": "Imunidade = CF. Isenção = lei. Cai em todo exame."
+      },
+      {
+        "titulo": "Decadência x Prescrição tributária",
+        "errado": "A decadência tributária é o prazo para cobrar o crédito já lançado.",
+        "certo": "Decadência = prazo para CONSTITUIR o crédito (lançar) → 5 anos. Prescrição = prazo para COBRAR o crédito já lançado → 5 anos.",
+        "dica": "Decadência vem antes (lançar). Prescrição vem depois (cobrar)."
+      },
+      {
+        "titulo": "ITBI incide em herança?",
+        "errado": "O ITBI municipal incide sobre transmissão de imóvel por herança.",
+        "certo": "ITBI incide sobre transmissão INTER VIVOS a título oneroso. Herança é CAUSA MORTIS → tributa pelo ITCMD (estadual), não pelo ITBI.",
+        "dica": "Morte → ITCMD (estadual). Venda em vida → ITBI (municipal)."
+      },
+      {
+        "titulo": "ISS sobre serviço público essencial",
+        "errado": "O ISS sempre incide sobre a prestação de serviços, inclusive os públicos essenciais.",
+        "certo": "ISS NÃO incide quando o serviço público essencial é prestado diretamente pelo ente público E sem cobrança de tarifa.",
+        "dica": "Sem cobrança + prestação direta = sem ISS."
+      },
+      {
+        "titulo": "Limitações ao poder de tributar = imunidades?",
+        "errado": "As limitações constitucionais ao poder de tributar se resumem às imunidades.",
+        "certo": "As limitações abrangem tanto PRINCÍPIOS (legalidade, anterioridade, isonomia, vedação ao confisco) quanto IMUNIDADES. As imunidades são apenas uma parte do conjunto.",
+        "dica": "Limitações = princípios + imunidades."
+      },
+      {
+        "titulo": "Taxa x Preço público",
+        "errado": "Taxa e preço público são a mesma coisa para fins de tributação.",
+        "certo": "São institutos distintos: TAXA é tributo, cobrado compulsoriamente pelo exercício do poder de polícia ou uso de serviço público específico e divisível. PREÇO PÚBLICO é contraprestação voluntária (tarifa).",
+        "dica": "Taxa = tributo compulsório. Preço público = tarifa voluntária."
+      },
+      {
+        "titulo": "Imposto de renda — competência",
+        "errado": "O Imposto de Renda pode ser instituído tanto pela União quanto pelos estados.",
+        "certo": "O IR é de competência EXCLUSIVA da União (art. 153, III, CF). Estados e municípios não podem criar IR, mesmo que seja sobre renda de servidores.",
+        "dica": "IR = exclusivamente federal. Estados e municípios não podem criar."
+      },
+      {
+        "titulo": "Responsabilidade tributária por sucessão empresarial",
+        "errado": "O adquirente de estabelecimento comercial nunca responde por dívidas tributárias do alienante.",
+        "certo": "O adquirente responde integralmente pelos tributos relativos ao estabelecimento se o alienante cessar a atividade, ou subsidiariamente se o alienante continuar ou iniciar outra atividade (art. 133, CTN).",
+        "dica": "Adquiriu o negócio? Pode ser responsável pelos débitos anteriores."
+      },
+      {
+        "titulo": "Lançamento por homologação — prazo",
+        "errado": "No lançamento por homologação, o contribuinte declara e a Fazenda lança.",
+        "certo": "No lançamento por homologação, o contribuinte calcula, recolhe antecipadamente E declara. A Fazenda apenas homologa (expressa ou tacitamente). O recolhimento antecipado é essencial.",
+        "dica": "Homologação: contribuinte paga antes. Fazenda confirma depois."
+      },
+      {
+        "titulo": "Anterioridade nonagesimal — todos respeitam?",
+        "errado": "A anterioridade nonagesimal (90 dias) se aplica a todos os tributos.",
+        "certo": "Exceções à anterioridade nonagesimal: IR, base de cálculo do IPTU e do IPVA, IEG e empréstimo compulsório de guerra/calamidade. Nem todos os tributos respeitam os 90 dias.",
+        "dica": "Anterioridade nonagesimal também tem exceções. Memorize as principais."
+      },
+      {
+        "titulo": "IPTU progressivo — função",
+        "errado": "O IPTU só pode ser progressivo em razão do valor do imóvel.",
+        "certo": "O IPTU pode ser progressivo: em razão do VALOR do imóvel (fiscal) E em razão da FUNÇÃO SOCIAL da propriedade (extrafiscal), no caso de descumprimento do plano diretor.",
+        "dica": "IPTU progressivo: fiscal (valor) e extrafiscal (função social). São diferentes."
+      },
+      {
+        "titulo": "Contribuição de melhoria — limite",
+        "errado": "A contribuição de melhoria pode ser cobrada em qualquer valor, limitada ao custo da obra.",
+        "certo": "A contribuição de melhoria tem dois limites: o custo total da obra (limite global) e a valorização imobiliária individual de cada imóvel beneficiado (limite individual).",
+        "dica": "Dois limites: custo total da obra + valorização individual de cada imóvel."
+      },
+      {
+        "titulo": "Simples Nacional — todo empresário pode optar",
+        "errado": "Qualquer empresa pode aderir ao Simples Nacional, independente da atividade.",
+        "certo": "O Simples Nacional tem vedações: faturamento acima do limite, sócios pessoa jurídica, atividades vedadas por lei (financeiras, importadoras, etc.) e débitos tributários impeditivos.",
+        "dica": "Simples Nacional tem vedações. Nem toda empresa pode aderir."
+      },
+      {
+        "titulo": "ICMS — incide sobre exportações?",
+        "errado": "O ICMS incide normalmente sobre as exportações de mercadorias.",
+        "certo": "O ICMS é IMUNE nas exportações de mercadorias e serviços destinados ao exterior (art. 155, §2º, X, \"a\", CF). É uma imunidade constitucional para estimular exportações.",
+        "dica": "Exportação = imune ao ICMS. É imunidade constitucional, não isenção."
+      },
+      {
+        "titulo": "ISS x ICMS — conflito de competência",
+        "errado": "Quando um serviço envolve também fornecimento de mercadoria, sempre incide ICMS.",
+        "certo": "O conflito é resolvido pela lista da LC 116/2003: se o serviço está na lista, incide ISS (mesmo com fornecimento de mercadorias, salvo exceções). Se não está, incide ICMS.",
+        "dica": "Lista da LC 116 resolve o conflito ISS x ICMS."
+      }
+    ]
+  },
+  {
+    "id": "penal",
+    "nome": "Direito Penal",
+    "emoji": "🔒",
+    "pegadinhas": [
+      {
+        "titulo": "Lei penal retroage?",
+        "errado": "A lei penal nunca retroage.",
+        "certo": "A lei penal RETROAGE quando for mais BENÉFICA ao réu (art. 2º, CP). Retroage inclusive após o trânsito em julgado. Lei mais gravosa nunca retroage.",
+        "dica": "Retroatividade benéfica = garantia fundamental. Sempre retroage se beneficiar."
+      },
+      {
+        "titulo": "Erro de proibição — exclui dolo e culpa?",
+        "errado": "O erro de proibição exclui o dolo e a culpa, como o erro de tipo.",
+        "certo": "Erro de tipo: exclui dolo (e culpa se escusável). Erro de proibição: NÃO exclui dolo — o agente sabe o que faz, apenas desconhece que é proibido. Pode excluir culpabilidade se inevitável.",
+        "dica": "Erro de tipo → dolo/culpa. Erro de proibição → culpabilidade. Nunca dolo."
+      },
+      {
+        "titulo": "Todo crime admite tentativa?",
+        "errado": "Qualquer crime pode ser tentado desde que haja início de execução.",
+        "certo": "NÃO admitem tentativa: crimes culposos, crimes preterdolosos, crimes unissubsistentes (ato único, ex: injúria verbal), crimes omissivos próprios e contravenções penais.",
+        "dica": "Lista de crimes sem tentativa é cobrada. Memorize."
+      },
+      {
+        "titulo": "Legítima defesa — exige agressão consumada?",
+        "errado": "A legítima defesa só cabe quando a agressão já ocorreu.",
+        "certo": "A legítima defesa cabe contra agressão ATUAL ou IMINENTE. Agressão passada não admite legítima defesa — seria vingança.",
+        "dica": "Atual ou iminente = legítima defesa. Passada = não cabe."
+      },
+      {
+        "titulo": "Menor de 18 anos responde penalmente?",
+        "errado": "Menores de 18 podem responder penalmente em crimes graves.",
+        "certo": "O menor de 18 anos é ABSOLUTAMENTE inimputável (art. 27, CP). Jamais responde penalmente, independente da gravidade. Responde pelo ECA.",
+        "dica": "Absolutamente inimputável = sem exceção alguma."
+      },
+      {
+        "titulo": "Desistência voluntária x arrependimento eficaz",
+        "errado": "São sinônimos e têm os mesmos efeitos.",
+        "certo": "Desistência voluntária: agente para de executar antes de completar os atos. Arrependimento eficaz: atos já praticados, mas agente age para evitar o resultado.",
+        "dica": "Desistência = para antes. Arrependimento eficaz = age depois para evitar."
+      },
+      {
+        "titulo": "Estado de necessidade exclui culpabilidade?",
+        "errado": "O estado de necessidade é excludente de culpabilidade.",
+        "certo": "Estado de necessidade é excludente de ILICITUDE. Excludentes de culpabilidade: inimputabilidade, inexigibilidade de conduta diversa, erro de proibição inevitável.",
+        "dica": "Estado de necessidade = ilicitude. Não confunda com excludentes de culpabilidade."
+      },
+      {
+        "titulo": "Prescrição — começa sempre da data do crime?",
+        "errado": "O prazo prescricional sempre começa da data do crime.",
+        "certo": "Regra: começa do crime. Exceções: crime permanente → começa do cessamento; crime continuado → do último ato; bigamia e falsificação de registro → do conhecimento pelo ofendido.",
+        "dica": "Crime permanente: prescrição começa do fim da permanência."
+      },
+      {
+        "titulo": "Concurso material — penas somam sempre?",
+        "errado": "No concurso material, aplica-se a pena mais grave aumentada.",
+        "certo": "No concurso material (art. 69, CP) as penas SÃO SOMADAS. No concurso formal perfeito e no crime continuado, aplica-se a mais grave com aumento.",
+        "dica": "Material = soma. Formal/continuado = maior com aumento."
+      },
+      {
+        "titulo": "Coautor x Partícipe",
+        "errado": "Coautor e partícipe são a mesma coisa.",
+        "certo": "Coautor executa o núcleo do tipo (faz a conduta). Partícipe induz, instiga ou auxilia sem executar o tipo. Ambos respondem, mas com distinção para dosimetria.",
+        "dica": "Executa o tipo = coautor. Auxilia/instiga = partícipe."
+      },
+      {
+        "titulo": "Crime continuado — pena",
+        "errado": "No crime continuado, as penas de todos os crimes são somadas.",
+        "certo": "No crime continuado (art. 71, CP), aplica-se a pena do crime mais grave AUMENTADA de 1/6 a 2/3. As penas não são somadas.",
+        "dica": "Crime continuado = pena do mais grave + aumento de 1/6 a 2/3."
+      },
+      {
+        "titulo": "Dolo eventual x culpa consciente",
+        "errado": "Dolo eventual e culpa consciente são equivalentes pois o agente prevê o resultado em ambos.",
+        "certo": "Em ambos o agente prevê o resultado, mas: no DOLO EVENTUAL, ele ACEITA o resultado (assume o risco). Na CULPA CONSCIENTE, ele NÃO aceita e acredita que não ocorrerá.",
+        "dica": "Dolo eventual = aceita o resultado. Culpa consciente = não aceita, acredita que evitará."
+      },
+      {
+        "titulo": "Legítima defesa putativa exclui o crime?",
+        "errado": "A legítima defesa putativa (imaginária) exclui a ilicitude do fato.",
+        "certo": "A legítima defesa putativa é erro — o agente imagina, erroneamente, estar em legítima defesa. Exclui CULPABILIDADE (erro de proibição) ou DOLO (erro de tipo), não a ilicitude em si.",
+        "dica": "Putativa = erro. Não exclui ilicitude; exclui dolo ou culpabilidade."
+      },
+      {
+        "titulo": "Flagrante facultativo — qualquer pessoa pode efetuar?",
+        "errado": "Somente autoridades policiais podem efetuar prisão em flagrante.",
+        "certo": "A prisão em flagrante pode ser efetuada por QUALQUER PESSOA (flagrante facultativo) ou é obrigatória para autoridades policiais (flagrante obrigatório). Art. 301, CPP.",
+        "dica": "Qualquer pessoa pode prender em flagrante. Não é só a polícia."
+      },
+      {
+        "titulo": "Crimes contra a honra — calúnia x difamação",
+        "errado": "Calúnia e difamação são equivalentes e a principal diferença é a gravidade.",
+        "certo": "Calúnia: imputar FATO DEFINIDO COMO CRIME, sabendo ser falso. Difamação: imputar fato OFENSIVO À REPUTAÇÃO (não necessariamente crime). Injúria: ofender a dignidade sem imputar fato.",
+        "dica": "Calúnia = fato criminoso falso. Difamação = fato ofensivo (não precisa ser crime). Injúria = ofensa sem fato."
+      },
+      {
+        "titulo": "Extinção da punibilidade pelo casamento",
+        "errado": "O casamento com a vítima extingue a punibilidade em crimes sexuais.",
+        "certo": "Esta causa de extinção da punibilidade foi REVOGADA pela Lei 11.106/2005. Não existe mais no Código Penal.",
+        "dica": "Casamento com a vítima não extingue mais a punibilidade. Foi revogado."
+      },
+      {
+        "titulo": "Peculato culposo — pena",
+        "errado": "O peculato culposo tem a mesma pena do peculato doloso.",
+        "certo": "O peculato culposo tem pena muito menor (detenção de 3 meses a 1 ano). O peculato doloso tem reclusão de 2 a 12 anos. Além disso, no peculato culposo a reparação do dano extingue a punibilidade se feita antes da sentença.",
+        "dica": "Peculato culposo = pena menor + reparação extingue punibilidade antes da sentença."
+      },
+      {
+        "titulo": "Sursis — requisitos",
+        "errado": "O sursis (suspensão condicional da pena) pode ser concedido para qualquer condenado.",
+        "certo": "O sursis exige: pena privativa de liberdade não superior a 2 anos (sursis simples) ou 4 anos (sursis especial/humanitário), não reincidência em crime doloso, culpabilidade, antecedentes, conduta social e personalidade favoráveis.",
+        "dica": "Sursis tem requisitos objetivos e subjetivos. Não é automático."
+      },
+      {
+        "titulo": "Extinção da punibilidade pela prescrição antes do trânsito em julgado",
+        "errado": "A prescrição antes do trânsito em julgado leva em conta a pena efetivamente aplicada.",
+        "certo": "Antes do trânsito em julgado, a prescrição é calculada com base na PENA MÁXIMA EM ABSTRATO cominada ao crime. Só após o trânsito é que se usa a pena concretamente aplicada.",
+        "dica": "Pré-trânsito = pena máxima abstrata. Pós-trânsito = pena concretamente aplicada."
+      },
+      {
+        "titulo": "Ação penal nos crimes contra a honra",
+        "errado": "Os crimes contra a honra são sempre de ação penal privada.",
+        "certo": "Regra: ação penal privada. Exceções: se o ofendido for funcionário público no exercício da função → ação penal pública condicionada. Se envolver Presidente da República ou chefes de Estado estrangeiros → ação penal pública incondicionada.",
+        "dica": "Crimes contra a honra: privada (regra) com exceções importantes."
+      }
+    ]
+  },
+  {
+    "id": "pp",
+    "nome": "Processo Penal",
+    "emoji": "👮",
+    "pegadinhas": [
+      {
+        "titulo": "Prazos do processo penal = CPC?",
+        "errado": "No processo penal aplica-se o prazo geral do CPC de 15 dias para os recursos.",
+        "certo": "O processo penal tem prazos próprios: apelação = 5 dias; RESE = 5 dias; embargos de declaração = 2 dias; defesa prévia no rito ordinário = 10 dias. Não use o CPC.",
+        "dica": "Processo penal tem prazos próprios. 15 dias do CPC = armadilha."
+      },
+      {
+        "titulo": "Flagrante preparado é válido?",
+        "errado": "O flagrante preparado é forma legítima de prisão em flagrante.",
+        "certo": "O flagrante preparado é INVÁLIDO (Súmula 145, STF). Configura crime impossível. Diferente do flagrante esperado (polícia aguarda o delito acontecer sem induzir) que é válido.",
+        "dica": "Preparado (induzido) = inválido. Esperado (aguardado) = válido."
+      },
+      {
+        "titulo": "Juiz pode decretar prisão preventiva de ofício?",
+        "errado": "O juiz pode decretar prisão preventiva de ofício quando verificar os requisitos do art. 312 CPP.",
+        "certo": "Após o Pacote Anticrime (Lei 13.964/2019), o juiz NÃO pode decretar prisão preventiva de ofício — nem na fase investigativa, nem durante o processo. Só a requerimento.",
+        "dica": "Pós-2019: juiz não decreta preventiva de ofício. Precisa de requerimento."
+      },
+      {
+        "titulo": "MP pode desistir da ação penal pública?",
+        "errado": "O MP pode desistir da ação penal pública se verificar insuficiência de provas.",
+        "certo": "O MP NÃO pode desistir da ação penal pública depois de proposta (art. 42, CPP). Princípio da indisponibilidade. Pode pedir absolvição, mas não retirar a ação.",
+        "dica": "Indisponibilidade da ação penal: propôs, não pode desistir."
+      },
+      {
+        "titulo": "Foro por prerrogativa persiste após o mandato?",
+        "errado": "O parlamentar mantém foro no STF para crimes do mandato mesmo após ele terminar.",
+        "certo": "O foro só vale durante o mandato e para crimes EM RAZÃO do mandato (STF, AP 937). Com o fim do mandato, o processo vai ao juízo de 1º grau (salvo sentença já prolatada).",
+        "dica": "Fim do mandato = fim do foro (regra). Exceção: sentença já prolatada."
+      },
+      {
+        "titulo": "Toda prova ilícita é nula?",
+        "errado": "Toda prova obtida por meio ilícito é absolutamente nula, sem exceção.",
+        "certo": "Há exceções: teoria da descoberta inevitável e teoria da fonte independente (art. 157, §§1º e 2º, CPP). Se a prova seria obtida por meio lícito de qualquer forma, pode ser usada.",
+        "dica": "Prova ilícita = exclusão (regra). Descoberta inevitável e fonte independente = exceções."
+      },
+      {
+        "titulo": "Interrogatório — primeiro ato da instrução?",
+        "errado": "O interrogatório do réu é o primeiro ato da instrução criminal.",
+        "certo": "Desde o Pacote Anticrime (art. 400, CPP), o interrogatório é o ÚLTIMO ato da instrução. O réu fala por último, após toda a produção de provas.",
+        "dica": "Pós-2019: interrogatório = ÚLTIMO ato da instrução."
+      },
+      {
+        "titulo": "RESE cabe para qualquer decisão interlocutória?",
+        "errado": "O RESE cabe para impugnar qualquer decisão interlocutória no processo penal.",
+        "certo": "O RESE só cabe nas hipóteses TAXATIVAS do art. 581 do CPP. Para decisões não listadas, cabe apelação ou aguarda-se a sentença.",
+        "dica": "RESE = rol taxativo do art. 581. Fora do rol = não cabe."
+      },
+      {
+        "titulo": "Brasil adota sistema inquisitivo?",
+        "errado": "O Brasil adota o sistema inquisitivo no processo penal.",
+        "certo": "O Brasil adota o sistema ACUSATÓRIO (reforçado pelo Pacote Anticrime). O juiz não pode investigar nem iniciar o processo penal. MP acusa, defesa defende, juiz julga.",
+        "dica": "Acusatório = funções separadas. Inquisitivo = tudo concentrado no juiz."
+      },
+      {
+        "titulo": "Nulidade absoluta x relativa no processo penal",
+        "errado": "Toda nulidade no processo penal é absoluta.",
+        "certo": "Nulidade absoluta: reconhecida a qualquer tempo, sem precisar provar prejuízo (ex: falta de defesa técnica). Nulidade relativa: arguição oportuna + demonstração de prejuízo.",
+        "dica": "Absoluta = qualquer hora, sem provar prejuízo. Relativa = hora certa + prejuízo."
+      },
+      {
+        "titulo": "Prisão temporária — prazo",
+        "errado": "A prisão temporária tem prazo de 30 dias, prorrogável por mais 30.",
+        "certo": "A prisão temporária tem prazo de 5 dias, prorrogável por mais 5 (em crimes comuns). Para crimes hediondos e equiparados, o prazo é de 30 dias, prorrogável por mais 30.",
+        "dica": "Temporária comum = 5+5 dias. Hediondo = 30+30 dias."
+      },
+      {
+        "titulo": "Ação penal pública condicionada — retratação da representação",
+        "errado": "A vítima não pode se retratar da representação após o oferecimento da denúncia.",
+        "certo": "A vítima pode se retratar da representação ATÉ O OFERECIMENTO DA DENÚNCIA. Depois disso, não é mais possível a retratação (art. 25, CPP).",
+        "dica": "Retratação da representação = só até o oferecimento da denúncia."
+      },
+      {
+        "titulo": "Habeas corpus — cabimento",
+        "errado": "O habeas corpus só pode ser impetrado em favor do réu preso.",
+        "certo": "O habeas corpus pode ser impetrado preventivamente (antes da prisão), para evitar coação iminente à liberdade de locomoção. Não exige que o impetrante esteja preso.",
+        "dica": "HC preventivo = cabe mesmo sem estar preso ainda."
+      },
+      {
+        "titulo": "Revisão criminal — quem pode propor?",
+        "errado": "Somente o réu condenado pode propor revisão criminal.",
+        "certo": "A revisão criminal pode ser proposta pelo próprio réu, por seu procurador, por cônjuge, ascendente, descendente ou irmão — mesmo após a morte do réu.",
+        "dica": "Revisão criminal pode ser proposta por familiares, inclusive após a morte do réu."
+      },
+      {
+        "titulo": "Prisão preventiva — fundamentação periódica",
+        "errado": "Uma vez decretada a prisão preventiva, ela vale até o final do processo sem nova revisão.",
+        "certo": "O Pacote Anticrime (art. 316, CPP) exige revisão periódica da prisão preventiva a cada 90 dias. O juiz deve verificar se os fundamentos ainda persistem.",
+        "dica": "Preventiva deve ser revisada a cada 90 dias. Pacote Anticrime."
+      },
+      {
+        "titulo": "Competência — crime praticado por internet",
+        "errado": "Crime praticado pela internet é sempre julgado no local onde está o servidor.",
+        "certo": "A competência para crimes pela internet é no local onde ocorreu o RESULTADO do crime ou onde estava a vítima. Não é o local do servidor.",
+        "dica": "Crime pela internet = competência onde ocorreu o resultado/onde estava a vítima."
+      },
+      {
+        "titulo": "Acordo de não persecução penal — requisitos",
+        "errado": "O acordo de não persecução penal pode ser proposto para qualquer crime.",
+        "certo": "O ANPP (art. 28-A, CPP) tem requisitos: crime sem violência ou grave ameaça, pena mínima inferior a 4 anos, réu não reincidente em crime doloso, não ser cabível arquivamento.",
+        "dica": "ANPP: sem violência + pena mínima < 4 anos + não reincidente."
+      },
+      {
+        "titulo": "Audiência de custódia — prazo",
+        "errado": "A audiência de custódia deve ser realizada em até 72 horas após a prisão.",
+        "certo": "A audiência de custódia deve ser realizada em até 24 horas após a prisão em flagrante, conforme a Resolução CNJ 213/2015 e a posição do STF.",
+        "dica": "Audiência de custódia = 24 horas após a prisão. Não 72."
+      },
+      {
+        "titulo": "Pronúncia — efeitos",
+        "errado": "A pronúncia, por fazer coisa julgada material, impede nova pronúncia por fatos supervenientes.",
+        "certo": "A pronúncia não faz coisa julgada material. É decisão interlocutória mista não terminativa. Pode ser revista se surgirem provas novas (desclassificação, impronúncia, etc.).",
+        "dica": "Pronúncia não faz coisa julgada material. É decisão interlocutória."
+      },
+      {
+        "titulo": "In dubio pro reo no tribunal do júri",
+        "errado": "O princípio in dubio pro reo se aplica igualmente no tribunal do júri.",
+        "certo": "No tribunal do júri, na fase de pronúncia, prevalece o in dubio pro societate (em caso de dúvida, pronuncia-se para levar ao júri). Só na votação pelos jurados que se aplica o in dubio pro reo.",
+        "dica": "Pronúncia = in dubio pro societate. Votação dos jurados = in dubio pro reo."
+      }
+    ]
+  },
+  {
+    "id": "civil",
+    "nome": "Direito Civil",
+    "emoji": "📋",
+    "pegadinhas": [
+      {
+        "titulo": "Personalidade civil começa no nascimento?",
+        "errado": "A personalidade civil começa no nascimento com vida e o nascituro não tem proteção antes disso.",
+        "certo": "A personalidade começa com o nascimento com vida (art. 2º, CC), MAS a lei protege os direitos do nascituro desde a concepção (direitos hereditários, alimentos, filiação).",
+        "dica": "Personalidade = nascimento. Proteção dos direitos = desde a concepção."
+      },
+      {
+        "titulo": "Prescrição pode ser renunciada antes de consumada?",
+        "errado": "A prescrição pode ser renunciada antes ou depois de consumada.",
+        "certo": "A prescrição só pode ser renunciada APÓS consumada (art. 191, CC). Renúncia prévia é nula. Protege a parte mais fraca de renúncias antecipadas em contratos de adesão.",
+        "dica": "Renúncia da prescrição = só depois de consumada."
+      },
+      {
+        "titulo": "Erro de direito invalida o negócio jurídico?",
+        "errado": "O erro de direito é causa de anulação do negócio jurídico.",
+        "certo": "Em regra, o erro de direito NÃO invalida o negócio. A lei não escusa o desconhecimento (art. 3º, LINDB). Só em casos excepcionais em que o erro não implica recusa à aplicação da lei.",
+        "dica": "Ninguém se escusa de conhecer a lei. Erro de direito geralmente não anula."
+      },
+      {
+        "titulo": "Cláusula penal afasta perdas e danos?",
+        "errado": "Com a cláusula penal, o credor não pode cumular indenização por perdas e danos.",
+        "certo": "A cláusula penal substitui a indenização padrão. Mas se o contrato permitir e houver prejuízo superior, é possível cumular. Depende da redação do contrato.",
+        "dica": "Cláusula penal = substitui perdas e danos (regra). Excedente pode ser cobrado se houver pacto."
+      },
+      {
+        "titulo": "Posse é direito real?",
+        "errado": "A posse é um direito real, assim como a propriedade.",
+        "certo": "Posse NÃO é direito real. É uma situação fática protegida juridicamente (situação possessória). Os direitos reais estão taxativamente no art. 1.225 do CC e posse não consta.",
+        "dica": "Posse = situação fática. Não é direito real (não está no art. 1.225)."
+      },
+      {
+        "titulo": "Responsabilidade objetiva depende de culpa?",
+        "errado": "Toda responsabilidade civil exige comprovação de culpa.",
+        "certo": "Existe a responsabilidade OBJETIVA, que independe de culpa — basta nexo causal e dano (ex: atividade de risco, CDC, dano ambiental, responsabilidade do Estado).",
+        "dica": "Regra = subjetiva (culpa). Exceção = objetiva (risco, CDC, Estado)."
+      },
+      {
+        "titulo": "União estável precisa de contrato?",
+        "errado": "A união estável só é reconhecida juridicamente se houver contrato de convivência.",
+        "certo": "União estável é relação FÁTICA que independe de contrato (art. 1.723, CC). O contrato de convivência pode regular efeitos patrimoniais, mas não é requisito para o reconhecimento.",
+        "dica": "União estável = fato. Contrato = opcional para patrimônio."
+      },
+      {
+        "titulo": "Ordem de vocação hereditária",
+        "errado": "O cônjuge sobrevivente herda antes dos ascendentes do falecido.",
+        "certo": "Ordem: 1º descendentes (com cônjuge em alguns regimes); 2º ascendentes (com cônjuge); 3º cônjuge sobrevivente sozinho; 4º colaterais (até 4º grau).",
+        "dica": "Descendentes > Ascendentes > Cônjuge sozinho > Colaterais."
+      },
+      {
+        "titulo": "Prazo para ação de reparação civil",
+        "errado": "O prazo prescricional para ação de reparação civil por ato ilícito é de 5 anos.",
+        "certo": "O prazo é de 3 anos (art. 206, §3º, V, CC). Prazo especial, não o geral de 10 anos. A confusão com 5 anos é clássica.",
+        "dica": "Responsabilidade civil = 3 anos. Não confunda com o prazo geral de 10 anos."
+      },
+      {
+        "titulo": "Usucapião ordinária x extraordinária",
+        "errado": "A usucapião extraordinária exige justo título e boa-fé.",
+        "certo": "É o inverso: ORDINÁRIA exige justo título + boa-fé (prazo de 10 anos). EXTRAORDINÁRIA dispensa justo título e boa-fé, mas exige prazo maior (15 anos, redutível a 10 com moradia habitual ou obras/serviços produtivos).",
+        "dica": "Ordinária = com título e boa-fé. Extraordinária = sem, mas mais tempo."
+      },
+      {
+        "titulo": "Simulação x Fraude contra credores",
+        "errado": "Simulação e fraude contra credores têm os mesmos efeitos.",
+        "certo": "Simulação: negócio NULO (vício social). Fraude contra credores: negócio ANULÁVEL (defeito do negócio). Efeitos e mecanismos de reconhecimento são diferentes.",
+        "dica": "Simulação = nulidade. Fraude contra credores = anulabilidade."
+      },
+      {
+        "titulo": "Testamento cerrado — quem pode abrir?",
+        "errado": "Qualquer pessoa pode abrir o testamento cerrado após a morte do testador.",
+        "certo": "O testamento cerrado, após a morte do testador, deve ser apresentado ao juiz, que o abrirá e mandará registrar. Particular não pode abri-lo. A abertura informal invalida o testamento.",
+        "dica": "Testamento cerrado: só o juiz pode abrir. Abertura particular invalida."
+      },
+      {
+        "titulo": "Capacidade para casar — menor de 16 anos",
+        "errado": "Menor de 16 anos pode casar com autorização dos pais e do juiz.",
+        "certo": "Após a Lei 13.811/2019, foi vedado o casamento de menor de 16 anos em QUALQUER HIPÓTESE, incluindo gravidez e anuência dos pais. Não existe mais exceção.",
+        "dica": "Menor de 16 anos = não pode casar em hipótese alguma (desde 2019)."
+      },
+      {
+        "titulo": "Bem de família — impenhorabilidade",
+        "errado": "O bem de família legal é sempre impenhorável, sem exceção.",
+        "certo": "O bem de família é impenhorável, mas tem exceções: dívidas anteriores à sua constituição, créditos tributários do próprio imóvel, pensão alimentícia, dívidas por construção/reforma do imóvel, e créditos de trabalhadores domésticos.",
+        "dica": "Bem de família tem exceções à impenhorabilidade. FGV adora cobrar."
+      },
+      {
+        "titulo": "Negócio jurídico nulo x anulável",
+        "errado": "Negócio nulo e anulável têm os mesmos efeitos e os mesmos prazos para impugnação.",
+        "certo": "São distintos: NULO não produz efeitos, pode ser reconhecido de ofício, não convalesce e é imprescritível. ANULÁVEL produz efeitos até ser anulado, exige provocação da parte e tem prazo decadencial de 4 anos (regra).",
+        "dica": "Nulo = imprescritível, de ofício. Anulável = prazo de 4 anos, mediante provocação."
+      },
+      {
+        "titulo": "Responsabilidade dos pais pelos filhos menores",
+        "errado": "Os pais respondem objetivamente pelos danos causados por filhos menores.",
+        "certo": "Os pais respondem OBJETIVAMENTE pelos atos dos filhos menores que estejam sob sua autoridade e em sua companhia (art. 932, I + art. 933, CC). Não precisam demonstrar culpa.",
+        "dica": "Pais = responsabilidade objetiva pelos filhos menores sob sua guarda."
+      },
+      {
+        "titulo": "Condomínio — decisões por maioria simples",
+        "errado": "Toda decisão em assembleia de condomínio vale com maioria simples.",
+        "certo": "Não. Algumas decisões exigem quórum qualificado: obras voluptuárias (2/3), alteração da convenção (2/3), mudança de destinação do edifício ou unidades (unanimidade).",
+        "dica": "Decisões do condomínio têm quóruns diferentes. Maioria simples não é universal."
+      },
+      {
+        "titulo": "Doação — pode ser revogada livremente?",
+        "errado": "O doador pode revogar a doação a qualquer tempo, desde que não tenha sido aceita.",
+        "certo": "Depois de aceita, a doação em regra é IRREVOGÁVEL. Exceções: ingratidão do donatário (art. 557, CC) e descumprimento de encargo. A simples vontade do doador não basta.",
+        "dica": "Doação aceita = irrevogável (regra). Só revoga por ingratidão ou encargo descumprido."
+      },
+      {
+        "titulo": "Contrato de adesão — cláusulas ambíguas",
+        "errado": "Em contrato de adesão, cláusulas ambíguas são interpretadas a favor do aderente.",
+        "certo": "Sim, cláusulas ambíguas ou contraditórias em contratos de adesão devem ser interpretadas em favor do ADERENTE (art. 423, CC). É aplicação do princípio da proteção da parte mais fraca.",
+        "dica": "Ambiguidade em contrato de adesão = interpreta a favor do aderente."
+      },
+      {
+        "titulo": "Lesão — vício do negócio jurídico",
+        "errado": "A lesão como vício do negócio jurídico exige apenas desproporção entre as prestações.",
+        "certo": "A lesão (art. 157, CC) exige: desproporção manifesta entre as prestações + que o lesado, por premente necessidade ou inexperiência, tenha sido levado a contratar em condições desvantajosas. Não basta a mera desproporção.",
+        "dica": "Lesão = desproporção + necessidade/inexperiência. Dois requisitos."
+      }
+    ]
+  },
+  {
+    "id": "pc",
+    "nome": "Processo Civil",
+    "emoji": "⚖️",
+    "pegadinhas": [
+      {
+        "titulo": "Prazos no CPC/2015 — dias corridos ou úteis?",
+        "errado": "No CPC/2015, os prazos são contados em dias corridos, exceto quando a lei especificar.",
+        "certo": "O CPC/2015 inverteu a regra: prazos são contados em dias ÚTEIS (art. 219). A exceção são prazos em meses e anos. Essa regra vale para as partes, não para os atos do juiz.",
+        "dica": "CPC/2015: dias úteis é a regra. Dias corridos = exceção."
+      },
+      {
+        "titulo": "Competência absoluta pode ser modificada pelas partes?",
+        "errado": "As partes podem modificar qualquer competência por acordo.",
+        "certo": "Somente a competência RELATIVA pode ser modificada (prorrogação). A competência absoluta (em razão da matéria e funcional) é inderrogável — nem acordo entre as partes a muda.",
+        "dica": "Absoluta = ninguém muda. Relativa = partes podem prorrogar."
+      },
+      {
+        "titulo": "Tutela de evidência exige perigo de dano?",
+        "errado": "Toda tutela provisória exige perigo de dano iminente.",
+        "certo": "A tutela de URGÊNCIA exige fumus boni iuris + periculum in mora. A tutela de EVIDÊNCIA NÃO exige perigo — basta prova inequívoca do direito (art. 311, CPC).",
+        "dica": "Urgência = perigo + fumaça. Evidência = só prova robusta."
+      },
+      {
+        "titulo": "Sociedade não personificada pode ser parte?",
+        "errado": "Sociedades sem personalidade jurídica não têm capacidade processual.",
+        "certo": "Podem sim! O art. 75, IX, CPC confere capacidade processual à sociedade não personificada (irregular ou de fato), representada por quem a administra.",
+        "dica": "Sem PJ ≠ sem capacidade processual. Art. 75, IX CPC."
+      },
+      {
+        "titulo": "Petição inicial deve trazer as provas?",
+        "errado": "A petição inicial deve conter provas de todos os fatos alegados, sob pena de inépcia.",
+        "certo": "A petição inicial deve conter os FATOS e FUNDAMENTOS JURÍDICOS do pedido. As provas são produzidas na fase própria. Devem ser anexados os documentos indispensáveis à propositura.",
+        "dica": "Petição = fatos + fundamentos. Provas = fase probatória."
+      },
+      {
+        "titulo": "Recurso adesivo pode ser interposto isoladamente?",
+        "errado": "O recurso adesivo pode ser interposto mesmo sem recurso da parte contrária.",
+        "certo": "O recurso adesivo é DEPENDENTE do recurso principal (art. 997, §2º, CPC). Sem recurso principal da parte contrária, não cabe recurso adesivo.",
+        "dica": "Sem recurso principal = sem recurso adesivo."
+      },
+      {
+        "titulo": "Agravo de instrumento cabe de qualquer decisão?",
+        "errado": "O AI é o recurso adequado para qualquer decisão interlocutória.",
+        "certo": "O AI só cabe nas hipóteses TAXATIVAS do art. 1.015 do CPC (entendimento do STJ). Para decisões fora do rol, aguarda-se a apelação para impugnar em preliminar.",
+        "dica": "Art. 1.015 = rol taxativo. Fora do rol = aguarda apelação."
+      },
+      {
+        "titulo": "Juiz sofre preclusão temporal?",
+        "errado": "O juiz sofre preclusão temporal como as partes se não decidir no prazo.",
+        "certo": "O juiz NÃO sofre preclusão temporal. Pode corrigir decisões interlocutórias até a sentença. Só a coisa julgada impede revisão. Partes sofrem preclusão; juiz, não.",
+        "dica": "Partes: preclusão temporal. Juiz: não sofre preclusão temporal."
+      },
+      {
+        "titulo": "Litispendência x coisa julgada",
+        "errado": "Litispendência e coisa julgada são fenômenos equivalentes.",
+        "certo": "Litispendência: processo IDÊNTICO em curso. Coisa julgada: processo idêntico JÁ JULGADO com trânsito em julgado. Ambas exigem mesmas partes, causa de pedir e pedido.",
+        "dica": "Litispendência = em andamento. Coisa julgada = já decidido com trânsito."
+      },
+      {
+        "titulo": "Nulidade relativa no processo civil",
+        "errado": "Toda nulidade processual civil é absoluta e pode ser reconhecida de ofício.",
+        "certo": "Nulidade relativa: arguição oportuna + demonstração de prejuízo + não convalidada. Nulidade absoluta: qualquer tempo, de ofício, sem demonstrar prejuízo.",
+        "dica": "Relativa = arguição oportuna + prejuízo. Absoluta = de ofício, qualquer tempo."
+      },
+      {
+        "titulo": "Ação rescisória — prazo",
+        "errado": "A ação rescisória pode ser proposta a qualquer tempo após o trânsito em julgado.",
+        "certo": "A ação rescisória tem prazo DECADENCIAL de 2 anos, contados do trânsito em julgado da última decisão proferida no processo (art. 975, CPC).",
+        "dica": "Rescisória = 2 anos (decadência) a partir do trânsito em julgado."
+      },
+      {
+        "titulo": "Intervenção de terceiros — assistência",
+        "errado": "O assistente simples pode praticar os mesmos atos processuais que a parte principal.",
+        "certo": "O assistente SIMPLES fica sujeito à gestão do assistido — não pode contrariar a vontade do assistido, confessar, transigir ou desistir. O assistente LITISCONSORCIAL tem poderes mais amplos.",
+        "dica": "Assistente simples = subordinado ao assistido. Litisconsorcial = poderes mais amplos."
+      },
+      {
+        "titulo": "Reconvenção — quando cabe?",
+        "errado": "A reconvenção pode ser proposta a qualquer momento durante o processo.",
+        "certo": "A reconvenção deve ser oferecida SIMULTANEAMENTE com a contestação, no prazo de resposta do réu (art. 343, CPC). Não pode ser proposta em outro momento.",
+        "dica": "Reconvenção = junto com a contestação. Prazo único."
+      },
+      {
+        "titulo": "Honorários advocatícios — sucumbência recíproca",
+        "errado": "Na sucumbência recíproca, cada parte paga os honorários do advogado da outra.",
+        "certo": "Na sucumbência recíproca, as despesas e honorários são COMPENSADOS, podendo cada parte arcar com os honorários do próprio advogado, a critério do juiz (art. 86, CPC).",
+        "dica": "Sucumbência recíproca = compensação, não pagamento cruzado obrigatório."
+      },
+      {
+        "titulo": "Intimação por WhatsApp — validade",
+        "errado": "A intimação por WhatsApp é válida para todos os fins processuais.",
+        "certo": "A intimação por WhatsApp não é meio oficial de intimação processual no CPC. As intimações devem ser feitas pelos meios previstos em lei (publicação no Diário Oficial, portal eletrônico, correio, etc.).",
+        "dica": "WhatsApp não é meio oficial de intimação processual."
+      },
+      {
+        "titulo": "Cumprimento de sentença — prazo para pagamento",
+        "errado": "No cumprimento de sentença, o devedor tem 15 dias para pagar ou nomear bens à penhora.",
+        "certo": "O devedor tem 15 dias para PAGAR voluntariamente. Se não pagar, incide multa de 10% + honorários de 10% (art. 523, CPC). Não é necessário nomear bens — a penhora é determinada pelo juiz se não houver pagamento.",
+        "dica": "15 dias para pagar. Se não pagar: multa 10% + honorários 10%."
+      },
+      {
+        "titulo": "Execução de título extrajudicial — embargos suspendem?",
+        "errado": "Os embargos à execução sempre suspendem a execução.",
+        "certo": "Os embargos à execução NÃO têm efeito suspensivo automático (art. 919, CPC). O efeito suspensivo pode ser concedido pelo juiz se presentes os requisitos (garantia do juízo + risco de dano grave).",
+        "dica": "Embargos à execução: sem efeito suspensivo automático. Precisa de decisão judicial."
+      },
+      {
+        "titulo": "Gratuidade de justiça — declaração de hipossuficiência",
+        "errado": "A declaração de hipossuficiência é suficiente para obter gratuidade de justiça, sem possibilidade de impugnação.",
+        "certo": "A declaração gera PRESUNÇÃO de hipossuficiência, mas pode ser impugnada pela parte contrária. O juiz pode indeferir se houver elementos que demonstrem capacidade de arcar com as custas.",
+        "dica": "Declaração de hipossuficiência = presunção (não absoluta). Pode ser impugnada."
+      },
+      {
+        "titulo": "Impugnação ao cumprimento de sentença — prazo",
+        "errado": "A impugnação ao cumprimento de sentença pode ser oferecida a qualquer momento.",
+        "certo": "A impugnação deve ser oferecida no prazo de 15 dias, contados do término do prazo para pagamento voluntário (art. 525, CPC). Fora do prazo, ocorre preclusão.",
+        "dica": "Impugnação ao cumprimento: 15 dias após o fim do prazo para pagar voluntariamente."
+      },
+      {
+        "titulo": "Sentença ultra petita é nula?",
+        "errado": "A sentença ultra petita é absolutamente nula e deve ser inteiramente anulada.",
+        "certo": "A sentença ultra petita (que concede mais do que o pedido) não é totalmente nula — deve ser REDUZIDA ao limite do pedido. O excesso é que se invalida, não a sentença inteira.",
+        "dica": "Ultra petita = reduz ao limite do pedido. Não anula tudo."
+      }
+    ]
+  },
+  {
+    "id": "adm",
+    "nome": "Direito Administrativo",
+    "emoji": "🏢",
+    "pegadinhas": [
+      {
+        "titulo": "Ato nulo pode ser convalidado?",
+        "errado": "Todo ato administrativo ilegal pode ser convalidado desde que não cause prejuízo.",
+        "certo": "Somente atos com vícios SANÁVEIS podem ser convalidados: vícios de COMPETÊNCIA (quando não exclusiva) e de FORMA (quando não essencial). Vícios de finalidade, objeto e motivo não admitem convalidação.",
+        "dica": "Convalidação = só competência e forma. Demais vícios = anulação."
+      },
+      {
+        "titulo": "Poder de polícia é exclusivo da polícia?",
+        "errado": "O poder de polícia é prerrogativa exclusiva das forças policiais do Estado.",
+        "certo": "Poder de polícia é FUNÇÃO ADMINISTRATIVA exercida por toda a Administração Pública. Fiscal da prefeitura, ANVISA, DETRAN, PROCON — todos exercem poder de polícia.",
+        "dica": "Poder de polícia = Administração toda. Polícia = apenas uma das exercentes."
+      },
+      {
+        "titulo": "Poder discricionário é ilimitado?",
+        "errado": "No poder discricionário, a Administração tem liberdade absoluta.",
+        "certo": "A discricionariedade tem limites: legalidade, moralidade, finalidade pública, razoabilidade e proporcionalidade. O juiz controla os limites, não o mérito em si.",
+        "dica": "Discrição ≠ arbitrariedade. Sempre há limites jurídicos."
+      },
+      {
+        "titulo": "Cargo em comissão exige concurso?",
+        "errado": "Os cargos em comissão exigem concurso público.",
+        "certo": "Cargo em comissão é de LIVRE NOMEAÇÃO e exoneração (art. 37, II, CF). Não exige concurso. Deve ser usado para funções de direção, chefia e assessoramento.",
+        "dica": "Concurso = cargo efetivo. Comissão = livre nomeação."
+      },
+      {
+        "titulo": "Estado responde por qualquer dano?",
+        "errado": "O Estado responde objetivamente por qualquer dano causado a qualquer pessoa.",
+        "certo": "A responsabilidade objetiva exige: dano, conduta de AGENTE PÚBLICO agindo nessa qualidade e nexo causal (art. 37, §6º, CF). Culpa exclusiva da vítima ou de terceiro pode afastar.",
+        "dica": "Nexo causal é indispensável. Culpa exclusiva da vítima afasta responsabilidade."
+      },
+      {
+        "titulo": "Permissão de serviço público gera direito adquirido?",
+        "errado": "A permissão de serviço público gera direito adquirido ao permissionário.",
+        "certo": "Permissão é ato PRECÁRIO e discricionário — pode ser revogada a qualquer tempo, sem indenização (salvo benfeitorias necessárias). Diferente da concessão, que é contratual.",
+        "dica": "Permissão = precária = sem indenização por revogação (regra)."
+      },
+      {
+        "titulo": "Toda contratação pública exige licitação?",
+        "errado": "O poder público é obrigado a licitar em toda e qualquer contratação.",
+        "certo": "Há hipóteses de DISPENSA (art. 75, Lei 14.133/2021) e INEXIGIBILIDADE (art. 74) de licitação. Ex: artista consagrado (inexigibilidade); emergência; pequenas compras (dispensa).",
+        "dica": "Licitação = regra. Dispensa e inexigibilidade = exceções legais."
+      },
+      {
+        "titulo": "Judiciário pode revisar o mérito administrativo?",
+        "errado": "O Judiciário pode revisar tanto a legalidade quanto o mérito do ato administrativo.",
+        "certo": "O Judiciário controla apenas a LEGALIDADE. O mérito (conveniência e oportunidade) é reservado à Administração. Controle do mérito viola a separação dos poderes.",
+        "dica": "Judiciário = legalidade. Mérito = só a Administração."
+      },
+      {
+        "titulo": "Revogação x anulação de ato administrativo",
+        "errado": "Revogação e anulação têm o mesmo efeito e retroagem à origem.",
+        "certo": "Revogação: ato VÁLIDO, mas inconveniente → efeito EX NUNC (não retroage). Anulação: ato ILEGAL → efeito EX TUNC (retroage à origem). São institutos completamente distintos.",
+        "dica": "Revogação = ex nunc. Anulação = ex tunc."
+      },
+      {
+        "titulo": "Todo ato pode ser delegado?",
+        "errado": "Qualquer competência na Administração Pública pode ser delegada.",
+        "certo": "Existem competências INDELEGÁVEIS (art. 13, Lei 9.784/99): edição de atos normativos, decisão de recursos administrativos e competências exclusivas por lei.",
+        "dica": "Delegação = possível, mas com exceções. Art. 13 da Lei 9.784 lista o que não pode."
+      },
+      {
+        "titulo": "Servidores públicos — estabilidade quando adquirida?",
+        "errado": "Os servidores públicos adquirem estabilidade após 6 meses de estágio probatório.",
+        "certo": "A estabilidade é adquirida após 3 ANOS de efetivo exercício (art. 41, CF). O estágio probatório (avaliação de desempenho) ocorre durante esse período, mas não se confunde com o prazo de aquisição da estabilidade.",
+        "dica": "Estabilidade = 3 anos (não 6 meses). Estágio probatório é avaliação dentro desse período."
+      },
+      {
+        "titulo": "Licitação — modalidades da Lei 14.133/2021",
+        "errado": "A Lei 14.133/2021 manteve as mesmas modalidades de licitação da Lei 8.666/93.",
+        "certo": "A Nova Lei de Licitações (14.133/2021) extinguiu algumas modalidades (convite, tomada de preços) e manteve/criou: pregão, concorrência, concurso, leilão e diálogo competitivo.",
+        "dica": "Nova lei: extinguiu convite e tomada de preços. Criou diálogo competitivo."
+      },
+      {
+        "titulo": "Improbidade administrativa — punição automática ao funcionário condenado",
+        "errado": "O servidor condenado por improbidade administrativa perde automaticamente o cargo.",
+        "certo": "A perda do cargo não é automática — deve ser decretada pelo juiz na sentença condenatória de improbidade. Além disso, a Lei 14.230/2021 exigiu que o ato de improbidade seja DOLOSO; culpa não basta mais.",
+        "dica": "Improbidade pós-2021: dolo obrigatório + perda do cargo deve ser decretada pelo juiz."
+      },
+      {
+        "titulo": "Princípio da legalidade — Administração x Particular",
+        "errado": "O princípio da legalidade tem o mesmo alcance para a Administração e para o particular.",
+        "certo": "São diferentes: o PARTICULAR pode fazer tudo que a lei não proibir. A ADMINISTRAÇÃO só pode fazer o que a lei EXPRESSAMENTE AUTORIZAR. A vinculação administrativa à legalidade é muito mais intensa.",
+        "dica": "Particular: pode o que não é proibido. Administração: só o que é autorizado."
+      },
+      {
+        "titulo": "Ato administrativo vinculado — discrição da autoridade",
+        "errado": "O ato vinculado permite que a autoridade escolha a solução mais conveniente.",
+        "certo": "No ato VINCULADO, a lei estabelece todos os elementos do ato e a autoridade não tem margem de escolha. Deve praticar o ato exatamente como a lei determina. Discrição é característica do ato DISCRICIONÁRIO.",
+        "dica": "Vinculado = sem margem de escolha. Discricionário = margem de conveniência e oportunidade."
+      },
+      {
+        "titulo": "Desapropriação — modalidades e indenização",
+        "errado": "Na desapropriação por utilidade pública, a indenização pode ser feita em títulos da dívida pública.",
+        "certo": "Indenização em títulos da dívida pública é exclusiva da desapropriação por interesse social para REFORMA AGRÁRIA (art. 184, CF). Na desapropriação por necessidade ou utilidade pública, a indenização é sempre em dinheiro.",
+        "dica": "Reforma agrária = títulos. Utilidade/necessidade pública = dinheiro."
+      },
+      {
+        "titulo": "Contrato administrativo — cláusulas exorbitantes",
+        "errado": "As cláusulas exorbitantes nos contratos administrativos são ilegais por afrontarem o equilíbrio contratual.",
+        "certo": "As cláusulas exorbitantes são LEGAIS e características dos contratos administrativos. São prerrogativas da Administração: modificação unilateral, rescisão unilateral, fiscalização, aplicação de penalidades, equilíbrio econômico-financeiro.",
+        "dica": "Cláusulas exorbitantes = legais nos contratos administrativos. São prerrogativas da Administração."
+      },
+      {
+        "titulo": "Omissão do Estado — responsabilidade",
+        "errado": "O Estado responde objetivamente por todos os danos causados por omissão de seus agentes.",
+        "certo": "Por OMISSÃO, a responsabilidade do Estado é SUBJETIVA — depende de comprovação de culpa (negligência, imprudência ou imperícia) da Administração. A responsabilidade objetiva é para atos comissivos.",
+        "dica": "Comissão = responsabilidade objetiva. Omissão = responsabilidade subjetiva (STF diverge)."
+      },
+      {
+        "titulo": "Súmula vinculante — efeitos",
+        "errado": "A súmula vinculante só vincula os tribunais, não os órgãos do Poder Executivo.",
+        "certo": "A súmula vinculante vincula todos os órgãos do Poder Judiciário E da Administração Pública direta e indireta, nas esferas federal, estadual e municipal (art. 103-A, CF).",
+        "dica": "Súmula vinculante = vincula Judiciário + Administração Pública (todos os entes)."
+      },
+      {
+        "titulo": "Servidor estável — demissão",
+        "errado": "Servidor público estável não pode ser demitido em hipótese alguma.",
+        "certo": "O servidor estável pode perder o cargo em 4 hipóteses: sentença judicial transitada em julgado; processo administrativo disciplinar; avaliação periódica de desempenho insatisfatória; e necessidade de redução de despesas com pessoal (art. 169, CF).",
+        "dica": "Estabilidade não é absoluta. 4 hipóteses de perda do cargo."
+      }
+    ]
+  },
+  {
+    "id": "emp",
+    "nome": "Direito Empresarial",
+    "emoji": "🏦",
+    "pegadinhas": [
+      {
+        "titulo": "Empresário individual tem personalidade jurídica?",
+        "errado": "O empresário individual possui personalidade jurídica distinta da pessoa física.",
+        "certo": "O empresário individual NÃO tem personalidade jurídica distinta. Tem CNPJ (inscrição), mas a pessoa jurídica é a mesma da pessoa física. Responde ilimitadamente com seu patrimônio pessoal.",
+        "dica": "CNPJ ≠ personalidade jurídica. Empresário individual = pessoa física registrada."
+      },
+      {
+        "titulo": "EIRELI ainda existe?",
+        "errado": "A EIRELI é uma opção válida para atuar sozinho com responsabilidade limitada.",
+        "certo": "A EIRELI foi EXTINTA pela Lei 14.195/2021 e convertida automaticamente em sociedade limitada unipessoal (SLU). Questões com EIRELI como opção atual estão desatualizadas.",
+        "dica": "EIRELI = extinta em 2021. Hoje: sociedade limitada unipessoal."
+      },
+      {
+        "titulo": "Sócio de LTDA nunca responde com bens pessoais?",
+        "errado": "O sócio de LTDA nunca responde com seu patrimônio pessoal pelas dívidas da empresa.",
+        "certo": "Em regra, a responsabilidade é limitada ao capital social. Mas pode haver DESCONSIDERAÇÃO DA PERSONALIDADE JURÍDICA (art. 50, CC) em caso de abuso, desvio de finalidade ou confusão patrimonial.",
+        "dica": "Limitada = regra. Desconsideração = exceção que responsabiliza o sócio."
+      },
+      {
+        "titulo": "Desconsideração atinge todos os sócios?",
+        "errado": "A desconsideração da personalidade jurídica atinge todos os sócios da empresa.",
+        "certo": "A desconsideração atinge APENAS os sócios que agiram com abuso da personalidade, desvio de finalidade ou confusão patrimonial. Sócios que não participaram do ato não são atingidos.",
+        "dica": "Desconsideração = individualizada. Só quem abusou responde."
+      },
+      {
+        "titulo": "Capital da S.A. é dividido em quotas?",
+        "errado": "O capital social de uma S.A. é dividido em quotas entre os sócios.",
+        "certo": "S.A. divide o capital em AÇÕES. Quotas são da sociedade LIMITADA (LTDA). Essa distinção é básica e cai muito.",
+        "dica": "S.A. = ações. LTDA = quotas. Nunca confunda."
+      },
+      {
+        "titulo": "Sociedade simples é informal?",
+        "errado": "A sociedade simples é uma forma de sociedade informal, sem registro.",
+        "certo": "Simples ≠ informal. A sociedade simples é registrada no Registro Civil das Pessoas Jurídicas (não na Junta Comercial). É simples quanto ao OBJETO (não empresarial), não quanto à estrutura.",
+        "dica": "Simples = objeto não empresarial. Não significa informal."
+      },
+      {
+        "titulo": "Empresário rural está sempre sujeito à falência?",
+        "errado": "O empresário rural está sempre sujeito ao regime falimentar.",
+        "certo": "O empresário rural só se submete à falência se OPTAR pelo registro na Junta Comercial (art. 971, CC). Sem registro, não se sujeita à Lei de Falências.",
+        "dica": "Rural + registro = sujeito à falência. Sem registro = não."
+      },
+      {
+        "titulo": "Falência é punição?",
+        "errado": "A falência é uma punição ao empresário inadimplente.",
+        "certo": "Falência é medida de natureza PATRIMONIAL e coletiva — visa liquidar o ativo para pagar credores na ordem legal. Não tem natureza punitiva. Crime falimentar é apurado separadamente.",
+        "dica": "Falência = liquidação patrimonial. Não é punição."
+      },
+      {
+        "titulo": "Nome empresarial protegido após cancelamento?",
+        "errado": "O nome empresarial perde proteção imediatamente após o cancelamento do registro.",
+        "certo": "Após o cancelamento, o nome empresarial permanece protegido por até 1 ANO (art. 1.166, CC). Esse período impede que terceiros usem o nome de empresa recém-cancelada.",
+        "dica": "Cancelamento ≠ perda imediata. 1 ano de proteção residual."
+      },
+      {
+        "titulo": "Avalista pode se exonerar antes do vencimento?",
+        "errado": "O avalista pode pedir exoneração do aval antes do vencimento do título.",
+        "certo": "O aval é AUTÔNOMO e IRREVOGÁVEL. O avalista não pode se exonerar unilateralmente. Responde solidariamente como o avalizado até o pagamento ou prescrição do título.",
+        "dica": "Aval = irrevogável. Avalista responde até o pagamento."
+      },
+      {
+        "titulo": "Recuperação judicial — prazo do stay period",
+        "errado": "Na recuperação judicial, o prazo de suspensão das execuções (stay period) é de 180 dias.",
+        "certo": "O stay period é de 180 dias, prorrogável por mais 180 dias (totalizando até 360 dias) em caso de justo motivo, devidamente justificado e com anuência do devedor. (Lei 11.101/2005, art. 6º, §4º).",
+        "dica": "Stay period = 180 dias + 180 dias de prorrogação = até 360 dias."
+      },
+      {
+        "titulo": "Sociedade anônima — quórum para deliberações",
+        "errado": "Toda deliberação em assembleia de S.A. exige aprovação por maioria absoluta.",
+        "certo": "O quórum varia: maioria simples para deliberações comuns; maioria qualificada (metade + 1 do capital votante) para reforma do estatuto; unanimidade para certas matérias. Não é sempre maioria absoluta.",
+        "dica": "S.A.: quóruns variados. Não é sempre maioria absoluta."
+      },
+      {
+        "titulo": "Dissolução irregular — responsabilidade dos sócios",
+        "errado": "A dissolução regular da empresa isenta os sócios de responsabilidade pelas dívidas tributárias.",
+        "certo": "A dissolução IRREGULAR gera presunção de dissolução fraudulenta e autoriza o redirecionamento da execução fiscal para os sócios administradores (Súmula 435, STJ).",
+        "dica": "Dissolução irregular = presunção de fraude + sócios administradores respondem pessoalmente."
+      },
+      {
+        "titulo": "Nota promissória — vencimento",
+        "errado": "A nota promissória sem indicação de vencimento vence em 30 dias após a emissão.",
+        "certo": "A nota promissória sem indicação de vencimento é considerada À VISTA — vence no momento da apresentação ao devedor. Não é 30 dias.",
+        "dica": "Nota promissória sem vencimento = à vista. Não é 30 dias."
+      },
+      {
+        "titulo": "Endosso x Cessão de crédito",
+        "errado": "Endosso e cessão de crédito têm os mesmos efeitos sobre o devedor.",
+        "certo": "São distintos: no ENDOSSO, o devedor não pode opor ao endossatário as exceções que tinha contra o endossante (autonomia cambiária). Na CESSÃO DE CRÉDITO, o devedor pode opor ao cessionário todas as exceções que tinha contra o cedente.",
+        "dica": "Endosso = autônomo (devedor não pode excepcionar). Cessão = devedor pode excepcionar."
+      },
+      {
+        "titulo": "Protesto de título — quando necessário",
+        "errado": "O protesto é sempre necessário para cobrar o devedor em ação judicial.",
+        "certo": "O protesto NÃO é sempre necessário para ajuizar ação de cobrança. É obrigatório apenas para preservar o direito de regresso contra endossantes e avalistas do endossante. Para cobrar o devedor principal (emitente), não é exigido.",
+        "dica": "Protesto = necessário para o regresso. Não é exigido para cobrar o devedor principal."
+      },
+      {
+        "titulo": "Sociedade em conta de participação — personalidade jurídica",
+        "errado": "A sociedade em conta de participação (SCP) tem personalidade jurídica própria.",
+        "certo": "A SCP NÃO tem personalidade jurídica. O sócio ostensivo age em seu próprio nome, respondendo perante terceiros. O sócio participante (oculto) só se relaciona com o ostensivo, sem exposição a terceiros.",
+        "dica": "SCP = sem personalidade jurídica. Sócio oculto não aparece para terceiros."
+      },
+      {
+        "titulo": "Duplicata sem causa — validade",
+        "errado": "A duplicata pode ser emitida por qualquer empresa, independente de compra e venda ou prestação de serviços.",
+        "certo": "A duplicata só pode ser emitida em razão de COMPRA E VENDA MERCANTIL ou PRESTAÇÃO DE SERVIÇOS (Lei 5.474/68). Duplicata sem causa (simulada) é crime e não tem validade cambial.",
+        "dica": "Duplicata = só para compra e venda mercantil ou prestação de serviços."
+      },
+      {
+        "titulo": "Responsabilidade na transformação societária",
+        "errado": "Na transformação de uma sociedade (ex: LTDA para S.A.), os credores anteriores perdem seus direitos.",
+        "certo": "Na transformação societária, os credores anteriores NÃO perdem seus direitos. A transformação não afeta os direitos dos credores preexistentes, que mantêm as garantias que tinham.",
+        "dica": "Transformação societária não prejudica credores anteriores."
+      },
+      {
+        "titulo": "Marca x Nome empresarial — proteção",
+        "errado": "O registro do nome empresarial na Junta Comercial garante proteção da marca em todo o território nacional.",
+        "certo": "O registro do nome empresarial na Junta Comercial protege o nome no âmbito estadual. A proteção de MARCA em todo o território nacional exige registro no INPI.",
+        "dica": "Nome empresarial = proteção estadual (Junta). Marca = proteção nacional (INPI)."
+      }
+    ]
+  }
+];
+// ── STATE ──────────────────────────────────────────────
+let vistas=new Set(),acertosQuiz=0,errosQuiz=0,modoAtual='estudo',matFiltro='todas',quizFila=[],quizIdx=0;
+
+// ── INIT ───────────────────────────────────────────────
+function init(){
+  buildFiltros();
+  renderEstudo();
+  buildQuizFila();
+}
+
+function buildFiltros(){
+  const c=document.getElementById('filtros');
+  [{id:'todas',nome:'Todas',emoji:'🔥'},...MATERIAS].forEach(m=>{
+    const b=document.createElement('button');
+    b.className='filtro-btn'+(m.id==='todas'?' active':'');
+    b.dataset.mat=m.id;
+    b.textContent=m.emoji+' '+m.nome;
+    b.onclick=()=>setFiltro(m.id);
+    c.appendChild(b);
+  });
+}
+
+function setFiltro(id){
+  matFiltro=id;
+  document.querySelectorAll('.filtro-btn').forEach(b=>b.classList.toggle('active',b.dataset.mat===id));
+  if(modoAtual==='estudo') renderEstudo();
+  else{buildQuizFila();renderQuiz();}
+}
+
+function setModo(m){
+  modoAtual=m;
+  document.getElementById('btnEstudo').classList.toggle('active',m==='estudo');
+  document.getElementById('btnQuiz').classList.toggle('active',m==='quiz');
+  document.getElementById('viewEstudo').style.display=m==='estudo'?'block':'none';
+  document.getElementById('viewQuiz').style.display=m==='quiz'?'block':'none';
+  if(m==='quiz'){buildQuizFila();renderQuiz();}
+}
+
+// ── MODO ESTUDO ────────────────────────────────────────
+function renderEstudo(){
+  const view=document.getElementById('viewEstudo');
+  const mats=matFiltro==='todas'?MATERIAS:MATERIAS.filter(m=>m.id===matFiltro);
+  view.innerHTML='';
+  mats.forEach(mat=>{
+    const total=mat.pegadinhas.length;
+    const vN=mat.pegadinhas.filter((_,i)=>vistas.has(mat.id+'_'+i)).length;
+    const pct=total?Math.round(vN/total*100):0;
+
+    const bloco=document.createElement('div');
+    bloco.className='materia-bloco';
+    bloco.innerHTML=`<div class="mat-titulo">
+      <span style="font-size:15px">${mat.emoji}</span>
+      <h2>${mat.nome}</h2>
+      <span class="mat-badge">${vN}/${total}</span>
+      <div class="mat-progress"><div class="mat-progress-fill" id="prog_${mat.id}" style="width:${pct}%"></div></div>
+    </div>`;
+
+    mat.pegadinhas.forEach((p,i)=>{
+      const key=mat.id+'_'+i;
+      const card=document.createElement('div');
+      card.className='pegadinha-card'+(vistas.has(key)?' vista':'');
+      card.innerHTML=`<div class="card-header">
+        <div class="card-num">${String(i+1).padStart(2,'0')}</div>
+        <div class="card-titulo">${p.titulo}</div>
+        <div class="card-arrow">▾</div>
+      </div>
+      <div class="card-body">
+        <div class="row-errado">
+          <div class="row-label err">🚫 O que a FGV coloca</div>
+          <div class="row-texto">${p.errado}</div>
+        </div>
+        <div>
+          <div class="row-label ok">✓ A resposta certa</div>
+          <div class="row-texto certo">${p.certo}</div>
+        </div>
+        ${p.dica?`<div class="dica-txt">💡 ${p.dica}</div>`:''}
+      </div>`;
+
+      card.querySelector('.card-header').onclick=()=>{
+        const isOpen=card.classList.contains('open');
+        card.classList.toggle('open',!isOpen);
+        if(!isOpen){
+          vistas.add(key);
+          card.classList.add('vista');
+          updatePlacar();
+          const vN2=mat.pegadinhas.filter((_,j)=>vistas.has(mat.id+'_'+j)).length;
+          const pf=document.getElementById('prog_'+mat.id);
+          if(pf) pf.style.width=Math.round(vN2/total*100)+'%';
+          const badge=bloco.querySelector('.mat-badge');
+          if(badge) badge.textContent=vN2+'/'+total;
+        }
+      };
+      bloco.appendChild(card);
+    });
+    view.appendChild(bloco);
+  });
+}
+
+// ── MODO QUIZ ──────────────────────────────────────────
+function buildQuizFila(){
+  const mats=matFiltro==='todas'?MATERIAS:MATERIAS.filter(m=>m.id===matFiltro);
+  quizFila=[];
+  mats.forEach(mat=>mat.pegadinhas.forEach((p,i)=>quizFila.push({mat:mat.nome,emoji:mat.emoji,p,key:mat.id+'_'+i})));
+  for(let i=quizFila.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[quizFila[i],quizFila[j]]=[quizFila[j],quizFila[i]];}
+  quizIdx=0;
+}
+
+function renderQuiz(){
+  const view=document.getElementById('viewQuiz');
+  if(quizIdx>=quizFila.length){
+    const tot=acertosQuiz+errosQuiz||1;
+    const pct=Math.round(acertosQuiz/tot*100);
+    const msg=pct>=80?'Excelente! A FGV não vai te pegar nessa.':pct>=60?'Bom resultado. Revise as que errou e refaça o quiz.':'Ainda tem margem para melhorar. Revise no Modo Estudo e tente novamente.';
+    view.innerHTML=`<div class="quiz-container"><div class="resultado-wrap">
+      <div class="resultado-pct">${pct}%</div>
+      <div class="resultado-sub">${acertosQuiz} acertos de ${acertosQuiz+errosQuiz} questões</div>
+      <div class="resultado-msg">${msg}</div>
+      <button class="btn-retry" onclick="buildQuizFila();acertosQuiz=0;errosQuiz=0;updatePlacar();renderQuiz()">↺ Refazer quiz</button>
+    </div></div>`;
+    return;
+  }
+  const item=quizFila[quizIdx];
+  const p=item.p;
+  const shuffled=[{texto:p.errado,certa:false},{texto:p.certo,certa:true}].sort(()=>Math.random()-.5);
+  const prog=Math.round(quizIdx/quizFila.length*100);
+  view.innerHTML=`<div class="quiz-container">
+    <div class="quiz-prog-row">
+      <div class="quiz-prog-bar"><div class="quiz-prog-fill" style="width:${prog}%"></div></div>
+      <span class="quiz-prog-label">${quizIdx+1} / ${quizFila.length}</span>
+    </div>
+    <div class="quiz-card-wrap">
+      <span class="quiz-mat-tag">${item.emoji} ${item.mat}</span>
+      <div class="quiz-enunciado">Qual afirmação sobre <em>"${p.titulo}"</em> está correta?</div>
+      <div class="quiz-opts-wrap">
+        ${shuffled.map((o,i)=>`<button class="qopt" data-certa="${o.certa}" onclick="responderQuiz(this)">
+          <span class="opt-letter">${['A','B'][i]}</span>
+          <span>${o.texto}</span>
+        </button>`).join('')}
+      </div>
+      <div class="quiz-fb" id="qfb"></div>
+      <button class="btn-prox" id="qnext" onclick="quizIdx++;renderQuiz()">Próxima →</button>
+    </div>
+  </div>`;
+}
+
+function responderQuiz(btn){
+  const certa=btn.dataset.certa==='true';
+  document.querySelectorAll('.qopt').forEach(b=>{b.disabled=true;b.classList.add(b.dataset.certa==='true'?'certa':'errada');});
+  const item=quizFila[quizIdx];
+  const fb=document.getElementById('qfb');
+  if(certa){acertosQuiz++;fb.className='quiz-fb show ok';fb.textContent='✓ Correto! '+item.p.dica;}
+  else{errosQuiz++;fb.className='quiz-fb show nao';fb.textContent='✗ Incorreto. '+item.p.dica;}
+  vistas.add(item.key);
+  updatePlacar();
+  document.getElementById('qnext').className='btn-prox show';
+}
+
+function updatePlacar(){
+  document.getElementById('pgVistas').textContent=vistas.size;
+  document.getElementById('pgAcertos').textContent=acertosQuiz;
+  document.getElementById('pgErros').textContent=errosQuiz;
+  const tot=acertosQuiz+errosQuiz;
+  document.getElementById('pgTotal').textContent=tot?Math.round(acertosQuiz/tot*100)+'%':'—';
+}
+
+function resetarTudo(){
+  vistas.clear();acertosQuiz=0;errosQuiz=0;updatePlacar();buildQuizFila();
+  if(modoAtual==='estudo') renderEstudo();
+  else renderQuiz();
+}
+
+init();
+</script>
+</body>
+</html>
